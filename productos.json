@@ -1,0 +1,237 @@
+{
+ "actualizado": null,
+ "fuente": "Catálogo público de Mercadona recopilado por datania/mercadona-catalog",
+ "productos": {
+  "avena": {
+   "id": "16807",
+   "nombre": "Avena molida Hacendado",
+   "precio": 1.15,
+   "url": "https://tienda.mercadona.es/product/16807/avena-molida-hacendado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/69ee9eee81e7d2ed2450ba9c9b5cb144.jpg?fit=crop&h=300&w=300"
+  },
+  "arroz": {
+   "id": "5063",
+   "nombre": "Arroz largo Hacendado",
+   "precio": 1.2,
+   "url": "https://tienda.mercadona.es/product/5063/arroz-largo-hacendado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/801f924df0d429d82c0a136901dcb9b0.jpg?fit=crop&h=300&w=300"
+  },
+  "pasta": {
+   "id": "13025",
+   "nombre": "Macarrón grueso Hacendado",
+   "precio": 0.9,
+   "url": "https://tienda.mercadona.es/product/13025/macarron-grueso-hacendado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/9324831d28eecab4a1081c86a8f65786.jpg?fit=crop&h=300&w=300"
+  },
+  "panInt": {
+   "id": "18294",
+   "nombre": "Pan de molde integral con 20% avena 5% trigo sarraceno Hacendado",
+   "precio": 1.5,
+   "url": "https://tienda.mercadona.es/product/18294/pan-molde-integral-con-20-avena-5-trigo-sarraceno-hacendado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/f3ccd8c0b23f1583738c49f03fb2e254.jpg?fit=crop&h=300&w=300"
+  },
+  "wrap": {
+   "id": "17567",
+   "nombre": "Tortillas de trigo Delibreads 30 cm",
+   "precio": 2.35,
+   "url": "https://tienda.mercadona.es/product/17567/tortillas-trigo-delibreads-30-cm-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/b40bf5cda59aa0d7c49fe769c6ad3314.jpg?fit=crop&h=300&w=300"
+  },
+  "tortitas": {
+   "id": "14013",
+   "nombre": "Tortitas de arroz Hacendado",
+   "precio": 1.1,
+   "url": "https://tienda.mercadona.es/product/14013/tortitas-arroz-hacendado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/a202828b49681aeceaa281bc820c1a18.jpg?fit=crop&h=300&w=300"
+  },
+  "miel": {
+   "id": "15430",
+   "nombre": "Miel de flores Hacendado",
+   "precio": 3.2,
+   "url": "https://tienda.mercadona.es/product/15430/miel-flores-hacendado-bote",
+   "foto": "https://prod-mercadona.imgix.net/images/bcbdcf7e353f8eb71ac73be9eeb8fd50.jpg?fit=crop&h=300&w=300"
+  },
+  "garbanzos": {
+   "id": "26029",
+   "nombre": "Garbanzo cocido Hacendado",
+   "precio": 0.8,
+   "url": "https://tienda.mercadona.es/product/26029/garbanzo-cocido-hacendado-tarro",
+   "foto": "https://prod-mercadona.imgix.net/images/b8b807948038c4b64791632f799e9bd8.jpg?fit=crop&h=300&w=300"
+  },
+  "lentejas": {
+   "id": "26011",
+   "nombre": "Lenteja cocida Hacendado",
+   "precio": 0.75,
+   "url": "https://tienda.mercadona.es/product/26011/lenteja-cocida-hacendado-tarro",
+   "foto": "https://prod-mercadona.imgix.net/images/ffbc3f23e35051fc1a326bda5a4f9063.jpg?fit=crop&h=300&w=300"
+  },
+  "pollo": {
+   "id": "2787",
+   "nombre": "Filetes pechuga de pollo",
+   "precio": 4.09,
+   "url": "https://tienda.mercadona.es/product/2787/filetes-pechuga-pollo-bandeja",
+   "foto": "https://prod-mercadona.imgix.net/images/cfbe3b741d3a64cc637efe0c7bf0bb93.jpg?fit=crop&h=300&w=300"
+  },
+  "muslo": {
+   "id": "2789",
+   "nombre": "Contramuslos de pollo deshuesados y sin piel",
+   "precio": 3.74,
+   "url": "https://tienda.mercadona.es/product/2789/contramuslos-pollo-deshuesados-sin-piel-bandeja",
+   "foto": "https://prod-mercadona.imgix.net/images/6f014202bb9ed41e5125106c87ef1c74.jpg?fit=crop&h=300&w=300"
+  },
+  "picada": {
+   "id": "2868",
+   "nombre": "Preparado de carne picada vacuno",
+   "precio": 5.5,
+   "url": "https://tienda.mercadona.es/product/2868/preparado-carne-picada-vacuno-bandeja",
+   "foto": "https://prod-mercadona.imgix.net/images/9b98483e96624180d8a01e2f7e085f87.jpeg?fit=crop&h=300&w=300"
+  },
+  "pavo": {
+   "id": "17775",
+   "nombre": "Pechuga de pavo Hacendado finas lonchas",
+   "precio": 2.3,
+   "url": "https://tienda.mercadona.es/product/17775/pechuga-pavo-hacendado-finas-lonchas-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/95fd68946c67b47e452b5b3537ec89c5.jpg?fit=crop&h=300&w=300"
+  },
+  "salmon": {
+   "id": "24511",
+   "nombre": "Lomos de salmón sin piel Hacendado congelado",
+   "precio": 5.95,
+   "url": "https://tienda.mercadona.es/product/24511/lomos-salmon-sin-piel-sin-espinas-hacendado-congelado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/d276498ce484c1c8c3b247d77589e49d.jpg?fit=crop&h=300&w=300"
+  },
+  "merluza": {
+   "id": "26761",
+   "nombre": "Medallones de merluza del Cabo Hacendado ultracongelados",
+   "precio": 4.6,
+   "url": "https://tienda.mercadona.es/product/26761/medallones-merluza-cabo-hacendado-ultracongelados-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/c302f174c1c3f7c88c397bd6a67472d7.jpg?fit=crop&h=300&w=300"
+  },
+  "atun": {
+   "id": "18018",
+   "nombre": "Atún claro al natural Hacendado",
+   "precio": 4.2,
+   "url": "https://tienda.mercadona.es/product/18018/atun-claro-natural-hacendado",
+   "foto": "https://prod-mercadona.imgix.net/images/956d1c5ec266d8ac6c94e6aa70335047.jpg?fit=crop&h=300&w=300"
+  },
+  "huevos": {
+   "id": "31504",
+   "nombre": "Huevos grandes L",
+   "precio": 3.05,
+   "url": "https://tienda.mercadona.es/product/31504/huevos-grandes-l-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/707625e3e76b36f1834d56c1ed8aa8df.jpg?fit=crop&h=300&w=300"
+  },
+  "claras": {
+   "id": "31309",
+   "nombre": "Claras de huevo líquidas pasteurizadas",
+   "precio": 1.7,
+   "url": "https://tienda.mercadona.es/product/31309/claras-huevo-liquidas-pasteurizadas-botella",
+   "foto": "https://prod-mercadona.imgix.net/images/b40abf149eb42080eb449e0bdc83bda0.jpg?fit=crop&h=300&w=300"
+  },
+  "quesoBatido": {
+   "id": "51071",
+   "nombre": "Queso fresco batido desnatado 0% MG Hacendado",
+   "precio": 1.1,
+   "url": "https://tienda.mercadona.es/product/51071/queso-fresco-batido-desnatado-0-mg-hacendado-tarrina",
+   "foto": "https://prod-mercadona.imgix.net/images/d2f12f4f6b2de080b5aeebc8aa1a5e46.jpg?fit=crop&h=300&w=300"
+  },
+  "yogurP": {
+   "id": "20908",
+   "nombre": "Postre lácteo natural +Proteínas 12 g 0% MG",
+   "precio": 1.4,
+   "url": "https://tienda.mercadona.es/product/20908/postre-lacteo-natural-proteinas-hacendado-0-mg-12-g-proteinas-pack-4",
+   "foto": "https://prod-mercadona.imgix.net/images/e3ae024200bd6e46c8490761383a17a5.jpg?fit=crop&h=300&w=300"
+  },
+  "lecheS": {
+   "id": "10382",
+   "nombre": "Leche semidesnatada Hacendado",
+   "precio": 0.84,
+   "url": "https://tienda.mercadona.es/product/10382/leche-semidesnatada-hacendado-brick",
+   "foto": "https://prod-mercadona.imgix.net/images/5a14472b53ac7a848fc8220982694c4a.jpg?fit=crop&h=300&w=300"
+  },
+  "lecheE": {
+   "id": "10380",
+   "nombre": "Leche entera Hacendado",
+   "precio": 0.96,
+   "url": "https://tienda.mercadona.es/product/10380/leche-entera-hacendado-brick",
+   "foto": "https://prod-mercadona.imgix.net/images/0230a339ba4f6f64af767ea94081ce28.jpg?fit=crop&h=300&w=300"
+  },
+  "queso": {
+   "id": "50543",
+   "nombre": "Queso lonchas tierno de vaca Hacendado",
+   "precio": 2.5,
+   "url": "https://tienda.mercadona.es/product/50543/queso-lonchas-tierno-vaca-entrepinares-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/7fd31869c4e06d13baac0bdc8970e2e5.jpg?fit=crop&h=300&w=300"
+  },
+  "aove": {
+   "id": "4740",
+   "nombre": "Aceite de oliva virgen extra Hacendado",
+   "precio": 4.45,
+   "url": "https://tienda.mercadona.es/product/4740/aceite-oliva-virgen-extra-hacendado-botella",
+   "foto": "https://prod-mercadona.imgix.net/images/a5648e373920a10023a7ab6304eb0dc0.jpg?fit=crop&h=300&w=300"
+  },
+  "aguacate": {
+   "id": "3858",
+   "nombre": "Aguacates",
+   "precio": 3.65,
+   "url": "https://tienda.mercadona.es/product/3858/aguacates-bandeja",
+   "foto": "https://prod-mercadona.imgix.net/images/3626a39afce23381b73d55fb7a4a3c7d.jpg?fit=crop&h=300&w=300"
+  },
+  "cacahuete": {
+   "id": "16883",
+   "nombre": "Crema de cacahuete 100% Hacendado",
+   "precio": 2.65,
+   "url": "https://tienda.mercadona.es/product/16883/crema-cacahuete-100-hacendado-tarro",
+   "foto": "https://prod-mercadona.imgix.net/images/ecac26182b20af3cb009a9b33cac5693.jpg?fit=crop&h=300&w=300"
+  },
+  "nueces": {
+   "id": "34024",
+   "nombre": "Nuez natural Hacendado pelada",
+   "precio": 2.5,
+   "url": "https://tienda.mercadona.es/product/34024/nuez-natural-hacendado-pelada-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/de768af5358346867a912d57ec96b69c.jpeg?fit=crop&h=300&w=300"
+  },
+  "almendras": {
+   "id": "17668",
+   "nombre": "Almendra tostada Hacendado 0% sal añadida pelada",
+   "precio": 2.9,
+   "url": "https://tienda.mercadona.es/product/17668/almendra-tostada-hacendado-0-sal-anadida-pelada-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/7dfed96a41cd56a3bb55376d8180bfdb.jpg?fit=crop&h=300&w=300"
+  },
+  "salteado": {
+   "id": "11617",
+   "nombre": "Wok de verduras Hacendado ultracongelado",
+   "precio": 1.9,
+   "url": "https://tienda.mercadona.es/product/11617/wok-verduras-hacendado-ultracongelado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/8fe580eea105d0d86cd80d57477d83fa.jpg?fit=crop&h=300&w=300"
+  },
+  "pimiento": {
+   "id": "35221",
+   "nombre": "Pimiento rojo y verde Hacendado ultracongelado",
+   "precio": 1.2,
+   "url": "https://tienda.mercadona.es/product/35221/pimiento-rojo-verde-hacendado-ultracongelado-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/edc3300ee19dd682083042d5b90d4ca1.jpg?fit=crop&h=300&w=300"
+  },
+  "cebolla": {
+   "id": "13568",
+   "nombre": "Cebolla troceada Hacendado ultracongelada",
+   "precio": 0.95,
+   "url": "https://tienda.mercadona.es/product/13568/cebolla-troceada-hacendado-ultracongelada-paquete",
+   "foto": "https://prod-mercadona.imgix.net/images/01e62dd81eb0ed0c43d341f5dc84d170.jpg?fit=crop&h=300&w=300"
+  },
+  "tomateTri": {
+   "id": "16043",
+   "nombre": "Tomate triturado Hacendado",
+   "precio": 1.0,
+   "url": "https://tienda.mercadona.es/product/16043/tomate-triturado-hacendado-freir-bote",
+   "foto": "https://prod-mercadona.imgix.net/images/117a2a2230b103f17b50e07a73a8fc38.jpg?fit=crop&h=300&w=300"
+  },
+  "creatina": {
+   "id": "17732",
+   "nombre": "Creatina sabor neutro Ynsadiet complemento alimenticio",
+   "precio": 8.0,
+   "url": "https://tienda.mercadona.es/product/17732/creatina-sabor-neutro-ynsadiet-complemento-alimenticio-incluye-cacito-dosificador-bote",
+   "foto": "https://prod-mercadona.imgix.net/images/85eb4768727b58c5619ee3cff4ab4134.jpg?fit=crop&h=300&w=300"
+  }
+ }
+}

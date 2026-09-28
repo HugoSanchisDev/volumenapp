@@ -193,7 +193,7 @@ details summary::-webkit-details-marker{display:none}
 
 nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
-nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
 nav.tabs button{border:0;background:transparent;padding:9px 2px 10px;cursor:pointer;font-size:12px;font-weight:650;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px}
 nav.tabs button svg{width:22px;height:22px}
 nav.tabs button[aria-current="page"]{color:var(--accent)}
@@ -204,18 +204,34 @@ nav.tabs button .badge{width:7px;height:7px;border-radius:50%;background:var(--w
 .mt0{margin-top:0}.mt8{margin-top:8px}.mt16{margin-top:16px}
 .hr{height:1px;background:var(--line);margin:14px 0}
 @media (prefers-reduced-motion:no-preference){ .track i{transition:width .4s ease} }
+
+/* cajón para cambiar comida */
+#sheet{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,15,22,.55)}
+#sheet[hidden]{display:none}
+.sheetbox{background:var(--paper);width:100%;max-width:600px;max-height:88vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px))}
+.opt{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px 14px;margin:10px 0}
+.opt.cur{border:2px solid var(--accent)}
+.linkbtn{background:none;border:0;padding:6px 0;color:var(--muted);text-decoration:underline;font-size:13px;cursor:pointer;min-height:32px}
+/* entrenos */
+.exc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:10px 0}
+.setrow{display:flex;align-items:center;gap:8px;margin:6px 0}
+.setrow .sn{width:22px;font-weight:800;color:var(--muted)}
+.inp.sm{width:80px;min-height:42px;padding:6px 10px;text-align:center}
+.sug{font-size:13px;background:var(--soft);border-radius:10px;padding:8px 10px;margin:8px 0}
+.imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.imgs img{border-radius:12px;background:var(--soft);width:100%;height:auto}
+.exc a,.panel a{color:var(--accent)}
 </style>
 </head>
 <body>
 <div id="app" class="wrap"><p class="muted" style="padding-top:40px">Cargando tu plan…</p></div>
 <nav class="tabs" id="tabs" hidden></nav>
 <div id="toast" class="toast" hidden></div>
+<div id="sheet" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script>
-/* ============ CONFIGURACIÓN: pega aquí los datos de tu proyecto de Supabase ============ */
-const SUPABASE_URL="https://wondgkfpkccnkmjflvoh.supabase.co";      // ej. https://abcdefgh.supabase.co
-const SUPABASE_KEY="sb_publishable_bKe5JXWFTYDRnxEru1ftpQ_E0NZFFdX";    // la "anon" o "publishable" key (nunca la service_role)
 const BUCKET="fotos";
 
 /* ============ DATOS: productos (valores por 100 g, precio orientativo €/kg) ============ */
@@ -320,7 +336,25 @@ const RECIPES=[
  {id:"pastaAtun",n:"Pasta con atún y tomate",slots:["cena","comida"],min:15,items:[["pasta",100,"C"],["atun",110,"P"],["tomateTri",150,"V"],["aove",10,"F"]],
   steps:["Cuece la pasta.","Calienta el tomate con el aceite, orégano y el atún escurrido.","Mezcla y listo."]},
  {id:"tresDelicias",n:"Arroz tres delicias casero",slots:["cena","comida"],min:20,batch:true,items:[["arroz",110,"C"],["huevos",120,"P"],["pollo",100,"P"],["salteado",150,"V"],["aove",10,"F"]],
-  steps:["Usa arroz ya cocido (mejor del día anterior).","Haz un revuelto con los huevos y resérvalo; saltea el pollo en dados y las verduras.","Añade el arroz y el revuelto, saltea 3 min con salsa de soja."]}
+  steps:["Usa arroz ya cocido (mejor del día anterior).","Haz un revuelto con los huevos y resérvalo; saltea el pollo en dados y las verduras.","Añade el arroz y el revuelto, saltea 3 min con salsa de soja."]},
+ {id:"tostadasPB",n:"Tostadas de cacahuete y plátano con yogur",slots:["desayuno","merienda"],min:5,items:[["panInt",90,"C"],["cacahuete",25,"F"],["platano",120,"C"],["yogurP",200,"P"]],
+  steps:["Tuesta el pan.","Úntalo con la crema de cacahuete y pon el plátano en rodajas encima.","Acompaña con el yogur proteico."]},
+ {id:"overnight",n:"Avena en frío (overnight oats)",slots:["desayuno","media"],min:5,portable:true,items:[["avena",80,"C"],["lecheS",250,"C"],["yogurP",150,"P"],["platano",100,"C"],["cacahuete",12,"F"]],
+  steps:["La noche anterior mezcla en un bote la avena, la leche y el yogur.","Déjalo en la nevera toda la noche.","Por la mañana añade el plátano en rodajas y la crema de cacahuete. Sin cocinar y listo para llevar."]},
+ {id:"huevosPan",n:"Huevos revueltos con pan y plátano",slots:["desayuno"],min:10,items:[["barra",100,"C"],["huevos",120,"P"],["claras",100,"P"],["platano",120,"C"],["aove",8,"F"]],
+  steps:["Calienta el aceite en una sartén y haz el revuelto con los huevos y las claras a fuego suave.","Sirve con el pan.","El plátano, de postre o a mordiscos."]},
+ {id:"wrapPavo",n:"Wrap de pavo, queso y espinacas",slots:["media","merienda"],min:5,portable:true,items:[["wrap",120,"C"],["pavo",90,"P"],["quesoBatido",60,"P"],["queso",25,"F"],["espinacas",30,"V"]],
+  steps:["Unta las tortillas con el queso batido.","Añade el pavo, el queso en lonchas y las espinacas.","Enrolla apretado y corta por la mitad."]},
+ {id:"sandwichPavo",n:"Sándwich de pavo y queso",slots:["media","merienda"],min:4,portable:true,items:[["panInt",100,"C"],["pavo",90,"P"],["queso",40,"F"],["espinacas",25,"V"]],
+  steps:["Monta el sándwich con el pavo, el queso y las espinacas.","Si quieres, tuéstalo 2 minutos en la sandwichera o la sartén.","Envuélvelo para llevártelo."]},
+ {id:"polloHorno",n:"Pollo al horno con patatas y brócoli",slots:["comida","cena"],min:35,batch:true,items:[["patata",350,"C"],["pollo",180,"P"],["brocoli",200,"V"],["aove",12,"F"]],
+  steps:["Corta las patatas en gajos y ponlas en la bandeja con la mitad del aceite y sal; horno a 200 °C.","A los 10 minutos añade el pollo en filetes con especias (pimentón, ajo en polvo) y el brócoli.","Hornea 20 minutos más. Reparte en tápers."]},
+ {id:"hamburguesas",n:"Hamburguesas de ternera con arroz y pimiento",slots:["comida","cena"],min:25,batch:true,items:[["arroz",110,"C"],["picada",160,"P"],["pimiento",100,"V"],["cebolla",50,"V"],["aove",8,"F"]],
+  steps:["Cuece el arroz.","Forma hamburguesas con la carne picada, sal y pimienta y hazlas a la plancha 4 minutos por lado.","Saltea el pimiento y la cebolla con el aceite. Sirve todo junto."]},
+ {id:"pastaPollo",n:"Pasta con pollo y brócoli",slots:["comida","cena"],min:20,batch:true,items:[["pasta",110,"C"],["pollo",160,"P"],["brocoli",150,"V"],["aove",12,"F"],["queso",20,"F"]],
+  steps:["Cuece la pasta y, los últimos 4 minutos, el brócoli en la misma olla.","Dora el pollo en dados con el aceite y ajo.","Mezcla todo y funde por encima el queso."]},
+ {id:"garbanzosAtun",n:"Garbanzos con atún y arroz",slots:["comida"],min:15,items:[["garbanzos",250,"C"],["arroz",60,"C"],["atun",110,"P"],["pimiento",60,"V"],["aove",10,"F"]],
+  steps:["Cuece el arroz (o usa uno ya hecho).","Calienta los garbanzos escurridos con el pimiento y el aceite 5 minutos.","Añade el atún y el arroz, mezcla y sazona con pimentón."]}
 ];
 const SLOTS=["desayuno","media","comida","merienda","cena"];
 const SLOT_INFO={desayuno:{l:"Desayuno",k:.22,p:.2},media:{l:"Media mañana",k:.15,p:.15},comida:{l:"Comida",k:.28,p:.25},merienda:{l:"Merienda",k:.15,p:.15},cena:{l:"Cena",k:.20,p:.25}};
@@ -361,7 +395,7 @@ const LS_KEY=()=>"volumen-app-v1-"+(uid()||"anon");
 function defaultProfile(){return{sexo:"hombre",edad:23,peso:56,altura:170,nivel:"principiante",actividad:"media",
   gymDays:[0,1,3,4],padelDays:[5],despertar:"07:30",trabajo:"09:00",entreno:"18:30",dormir:"23:30",
   presupuesto:65,super:"ambos",exclude:[],cafeina:false}}
-function newState(profile){return{v:1,createdAt:today(),profile,kcalAdj:0,lowStreak:0,weights:[],checkins:[],log:{},swaps:{},shop:{},updatedAt:Date.now()}}
+function newState(profile){return{v:1,createdAt:today(),profile,kcalAdj:0,lowStreak:0,weights:[],checkins:[],log:{},swaps:{},shop:{},train:{},hidden:[],updatedAt:Date.now()}}
 
 function loadLocal(){try{const s=localStorage.getItem(LS_KEY());return s?JSON.parse(s):null}catch(e){return null}}
 function saveLocal(){try{localStorage.setItem(LS_KEY(),JSON.stringify(state))}catch(e){}}
@@ -455,7 +489,13 @@ function qtyLabel(id,g){
 }
 
 /* ============ PLAN ============ */
-function recipesFor(slot){const ex=state.profile.exclude;const l=RECIPES.filter(r=>r.slots.includes(slot)&&!r.items.some(i=>ex.includes(i[0])));return l.length?l:RECIPES.filter(r=>r.slots.includes(slot))}
+function recipesFor(slot){
+  const ex=state.profile.exclude||[],hid=state.hidden||[];
+  const all=RECIPES.filter(r=>r.slots.includes(slot));
+  let l=all.filter(r=>!hid.includes(r.id)&&!r.items.some(i=>ex.includes(i[0])));
+  if(!l.length)l=all.filter(r=>!r.items.some(i=>ex.includes(i[0])));
+  return l.length?l:all;
+}
 function weekNum(ws){return Math.round((dObj(ws)-new Date(2024,0,1))/(7*864e5))}
 function blockOf(d){return d<=2?0:d<=4?1:2}
 function baseRecipe(ws,d,slot){
@@ -605,9 +645,10 @@ const ICONS={
  plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 7c0-1.5 1-2 1-3.5M13 7c0-1.5 1-2 1-3.5"/></svg>',
  compra:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg>',
  progreso:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 2 5-6"/></svg>',
+ entreno:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg>',
  ajustes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'
 };
-const TABS=[["hoy","Hoy"],["plan","Plan"],["compra","Compra"],["progreso","Progreso"],["ajustes","Perfil"]];
+const TABS=[["hoy","Hoy"],["plan","Plan"],["compra","Compra"],["entreno","Entreno"],["progreso","Progreso"],["ajustes","Perfil"]];
 
 function render(){
   const app=$("#app"),nav=$("#tabs");
@@ -615,13 +656,14 @@ function render(){
   if(!booted){return}
   if(!session){nav.hidden=true;app.innerHTML=renderLogin();return}
   if(!state){nav.hidden=true;app.innerHTML=renderOnboarding();return}
+  fixState();
   nav.hidden=false;
   const due=checkinDue();
   nav.innerHTML=`<div class="in">${TABS.map(([k,l])=>`<button data-tab="${k}" ${ui.tab===k&&!ui.view?'aria-current="page"':""}>${ICONS[k]}<span>${l}${k==="progreso"&&due?'<span class="badge" aria-label="check-in pendiente"></span>':""}</span></button>`).join("")}</div>`;
   let html="";
   if(ui.view==="checkin")html=renderCheckin();
   else if(ui.view==="result")html=renderResult();
-  else html={hoy:renderHoy,plan:renderPlan,compra:renderCompra,progreso:renderProgreso,ajustes:renderAjustes}[ui.tab]();
+  else html={hoy:renderHoy,plan:renderPlan,compra:renderCompra,entreno:renderEntreno,progreso:renderProgreso,ajustes:renderAjustes}[ui.tab]();
   app.innerHTML=html;
   bindAfter();
 }
@@ -667,14 +709,14 @@ function renderHoy(){
     let lab=SLOT_INFO[m.slot].l;
     if(m.slot==="merienda"&&sch.trains&&t<sch.train)lab="Merienda pre-entreno";
     ev.push({t,kind:"meal"+(ck?" done":""),html:`<div class="card"><label class="check"><input type="checkbox" data-meal="${m.slot}" ${ck?"checked":""}><span><span class="small muted">${lab}</span><br><b>${esc(m.r.n)}</b><div class="mm">${mealMacroLine(m.m)}</div></span></label>
-      <details><summary>Ver cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></details></div>`});
+      <details><summary>Ver cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>${dislikeChips(m)}</details><div class="mt8"><button class="btn sm ghost" data-swap="${d}-${m.slot}">Cambiar esta comida</button></div></div>`});
     if(m.slot==="desayuno"){
       const ckc=!!log.crea;
       ev.push({t:t+1,kind:"minor"+(ckc?" done":""),html:`<label class="check"><input type="checkbox" data-act="crea" ${ckc?"checked":""}><span><b>Creatina, 5 g</b><div class="mm">Con el desayuno, en agua o en la leche. Todos los días, también los de descanso.</div></span></label>`});
     }
   }
   if(sch.trains){
-    ev.push({t:sch.train,kind:"train",html:`<div class="card"><b>${sch.gym?"Gimnasio":"Pádel"}</b><div class="mm">${sch.gym?"Entrena con intensidad y apunta tus pesos: si cada semana subes un poco peso o repeticiones, estás creciendo.":"Cuenta como actividad extra: ya está sumada en tus calorías."}</div></div>`});
+    ev.push({t:sch.train,kind:"train",html:sch.gym?(()=>{const rt=routineFor(d);return `<div class="card"><b>Gimnasio${rt?" · "+esc(rt.name):""}</b><div class="mm">${trainedOn(td)?"Ya has apuntado el entreno de hoy ✓":"Abre la rutina, apunta tus pesos y sube un poco cada semana: así creces."}</div><button class="btn sm primary mt8" data-tab="entreno">Ver rutina de hoy</button></div>`})():`<div class="card"><b>Pádel</b><div class="mm">Cuenta como actividad extra: ya está sumada en tus calorías.</div></div>`});
     if(sch.gym&&p.cafeina){
       const late=sch.bed-(sch.train-30)<8*60;
       ev.push({t:sch.train-30,kind:"minor",html:`<b>Cafeína (opcional)</b><div class="mm">${late?"Con tu hora de dormir, mejor un café pequeño (≤100 mg) o nada: dormir bien te hará crecer más que la cafeína.":"Un café 30 minutos antes de entrenar."}</div>`});
@@ -698,7 +740,7 @@ function renderPlan(){
   for(const m of meals){
     h+=`<article class="mealcard"><div class="head"><div><div class="slot">${hhmm(sch.t[m.slot])} · ${SLOT_INFO[m.slot].l}${m.r.batch?'<span class="tag">batch</span>':""}${m.r.portable?'<span class="tag">táper</span>':""}</div><h3 class="mt8" style="font-stretch:105%">${esc(m.r.n)}</h3><div class="mm">${mealMacroLine(m.m)} · ${m.r.min} min</div></div>
      <button class="btn sm ghost" data-swap="${d}-${m.slot}" aria-label="Cambiar ${esc(m.r.n)} por otra receta">Cambiar</button></div>
-     <details><summary>Cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></details></article>`;
+     <details><summary>Cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>${dislikeChips(m)}</details></article>`;
   }
   const blocks=[["Domingo","lunes a miércoles",[0,1,2]],["Miércoles noche","jueves y viernes",[3,4]],["Viernes noche","el fin de semana",[5,6]]];
   h+=`<section class="panel"><h3>Batch cooking</h3><p class="small muted">Comidas y cenas se repiten en bloques para que cocines una vez y comas varios días. En nevera, máximo 3 días.</p>`;
@@ -767,6 +809,7 @@ function renderProgreso(){
   const start=ci.length?ci[0].avg:null,now=ci.length?ci[ci.length-1].avg:null;
   h+=`<section class="stats"><div class="stat"><b>${start?fmt1(start):"–"}</b><span>kg al empezar</span></div><div class="stat"><b>${now?fmt1(now):"–"}</b><span>kg media actual</span></div><div class="stat"><b>${start?(now-start>=0?"+":"")+fmt1(now-start):"–"}</b><span>kg ganados</span></div></section>
   <section class="stats mt8"><div class="stat"><b>${streak}</b><span>semanas seguidas con check-in</span></div><div class="stat"><b>${fmt0(c.kcal)}</b><span>kcal diarias ahora</span></div><div class="stat"><b>${adherenceWeek(addDays(weekStartNow(),-7))??"–"}${adherenceWeek(addDays(weekStartNow(),-7))!=null?"%":""}</b><span>comidas hechas la semana pasada</span></div></section>`;
+  h+=trainStats();
   h+=`<section class="panel"><h3>Peso</h3><div class="mt8">${chartSVG()}</div></section>`;
   const withPh=ci.map((x,i)=>({x,i})).filter(o=>o.x.photos&&o.x.photos.front);
   if(withPh.length>=1){
@@ -822,7 +865,7 @@ function renderResult(){
 function profileForm(p,isOnb){
   const sel=(id,opts,val)=>`<select class="inp" id="${id}">${opts.map(([v,l])=>`<option value="${v}" ${v===val?"selected":""}>${l}</option>`).join("")}</select>`;
   const dayChips=(name,arr)=>`<div class="chips" role="group">${DAYS_S.map((s,i)=>`<button type="button" class="chip" data-daychip="${name}" data-i="${i}" aria-pressed="${arr.includes(i)}" aria-label="${DAYS[i]}">${s}</button>`).join("")}</div>`;
-  const excl=["pollo","muslo","picada","pavo","salmon","merluza","atun","huevos","quesoBatido","yogurP","lecheE","queso","lentejas","garbanzos","aguacate","cacahuete","nueces","almendras","boniato","brocoli","pimiento","cebolla","frutosRojos"];
+  const excl=Object.keys(PRODUCTS).filter(id=>!["whey","aove"].includes(id)).sort((a,b)=>PRODUCTS[a].n.localeCompare(PRODUCTS[b].n));
   return `<div class="grid2"><div class="field"><label class="f" for="pSexo">Sexo</label>${sel("pSexo",[["hombre","Hombre"],["mujer","Mujer"]],p.sexo)}</div>
   <div class="field"><label class="f" for="pEdad">Edad</label><input class="inp" id="pEdad" inputmode="numeric" value="${p.edad}"></div>
   <div class="field"><label class="f" for="pPeso">Peso inicial (kg)</label><input class="inp" id="pPeso" inputmode="decimal" value="${fmt1(p.peso)}" ${isOnb?"":"disabled"}></div>
@@ -837,7 +880,7 @@ function profileForm(p,isOnb){
   <div class="field"><label class="f" for="pBed">Me acuesto</label><input class="inp" type="time" id="pBed" value="${p.dormir}"></div></div>
   <div class="grid2"><div class="field"><label class="f" for="pBudget">Presupuesto semanal (€)</label><input class="inp" id="pBudget" inputmode="numeric" value="${p.presupuesto}"></div>
   <div class="field"><label class="f" for="pSuper">Supermercado</label>${sel("pSuper",[["ambos","Mercadona y Consum"],["mercadona","Mercadona"],["consum","Consum"]],p.super)}</div></div>
-  <div class="field"><label class="f">Alimentos que no quieres en tus recetas</label><div class="chips">${excl.map(id=>`<button type="button" class="chip x" data-excl="${id}" aria-pressed="${p.exclude.includes(id)}">${esc(PRODUCTS[id].n.split(" (")[0])}</button>`).join("")}</div><div class="hint">Toca para quitarlos. Las recetas con esos alimentos no aparecerán.</div></div>
+  <div class="field"><label class="f">Alimentos que no quieres en tus recetas</label><div class="chips">${excl.map(id=>`<button type="button" class="chip x" data-excl="${id}" aria-pressed="${p.exclude.includes(id)}">${esc(PRODUCTS[id].n.split(" (")[0])}</button>`).join("")}</div><div class="hint">Toca los que no quieras y guarda los cambios: las recetas con esos alimentos no volverán a salir. También puedes quitarlos desde cualquier comida.</div></div>
   <div class="field"><label class="check"><input type="checkbox" id="pCafe" ${p.cafeina?"checked":""}><span>Quiero que me recuerde la cafeína antes de entrenar</span></label></div>`;
 }
 function readProfileForm(base){
@@ -900,6 +943,175 @@ function renderAjustes(){
   return h;
 }
 
+
+/* ============ VETOS Y CAMBIO DE COMIDAS ============ */
+const shortName=id=>PRODUCTS[id].n.split(" (")[0];
+function fixState(){
+  state.train=state.train||{};state.hidden=state.hidden||[];
+  state.profile.exclude=state.profile.exclude||[];state.swaps=state.swaps||{};
+}
+function breaksPlan(id){
+  const ex=[...state.profile.exclude,id],hid=state.hidden||[];
+  for(const s of SLOTS){
+    const n=RECIPES.filter(r=>r.slots.includes(s)&&!hid.includes(r.id)&&!r.items.some(i=>ex.includes(i[0]))).length;
+    if(n<2)return SLOT_INFO[s].l;
+  }
+  return null;
+}
+function cleanSwaps(){
+  const ex=state.profile.exclude,hid=state.hidden||[];
+  for(const ws of Object.keys(state.swaps)){
+    for(const k of Object.keys(state.swaps[ws])){
+      const r=RECIPES.find(x=>x.id===state.swaps[ws][k]);
+      if(!r||hid.includes(r.id)||r.items.some(i=>ex.includes(i[0])))delete state.swaps[ws][k];
+    }
+  }
+}
+function dislikeChips(m){
+  const ids=[...new Set(m.items.map(i=>i[0]))].filter(id=>id!=="aove");
+  return `<div class="small muted mt8">¿Hay algo que no te guste? Quítalo y no volverá a salir:</div><div class="chips mt8">${ids.map(id=>`<button class="chip" data-noing="${id}">✕ ${esc(shortName(id))}</button>`).join("")}</div>`;
+}
+function batchDays(d){return [[0,1,2],[3,4],[5,6]][blockOf(d)]}
+function openSheet(d,slot){ui.sheet={d,slot,scope:"day"};document.body.style.overflow="hidden";renderSheet()}
+function closeSheet(){ui.sheet=null;const s=$("#sheet");s.hidden=true;s.innerHTML="";document.body.style.overflow=""}
+function renderSheet(){
+  const sh=ui.sheet,s=$("#sheet");if(!sh)return;
+  const ws=weekStartNow(),c=calc(),si=SLOT_INFO[sh.slot],cur=recipeAt(ws,sh.d,sh.slot);
+  const batch=(sh.slot==="comida"||sh.slot==="cena"),blk=batchDays(sh.d);
+  let list=recipesFor(sh.slot);if(!list.some(r=>r.id===cur.id))list=[cur,...list];
+  const ex=state.profile.exclude,hid=state.hidden;
+  const rows=list.map(r=>{
+    const m=scaleRecipe(r,c.kcal*si.k,c.P*si.p,c.F*si.k).m,isCur=r.id===cur.id;
+    return `<div class="opt ${isCur?"cur":""}"><div class="row between" style="flex-wrap:nowrap"><div><b>${esc(r.n)}</b><div class="mm">${fmt0(m.k)} kcal · ${fmt0(m.p)} g prot · ${r.min} min${r.portable?" · táper":""}${r.batch?" · batch":""}</div></div>${isCur?'<span class="tag">Actual</span>':`<button class="btn sm primary" data-pick="${r.id}">Elegir</button>`}</div><button class="linkbtn" data-hide="${r.id}">No me gusta esta receta</button></div>`;
+  }).join("");
+  const swapped=!!(state.swaps[ws]||{})[`${sh.d}-${sh.slot}`];
+  s.innerHTML=`<div class="sheetbox" role="dialog" aria-modal="true" aria-label="Cambiar comida">
+    <div class="row between"><h2>${si.l} del ${DAYS[sh.d].toLowerCase()}</h2><button class="btn sm ghost" data-act="closeSheet">Cerrar</button></div>
+    <p class="small muted">Todas las opciones se ajustan a tus calorías y proteína.</p>
+    ${batch?`<div class="seg mt8" role="group" aria-label="Dónde aplicar el cambio"><button data-scope="day" aria-pressed="${sh.scope==="day"}">Solo este día</button><button data-scope="block" aria-pressed="${sh.scope==="block"}">Todo el bloque (${blk.length} días)</button></div><p class="hint">El bloque son los días que comen del mismo batch cooking.</p>`:""}
+    ${rows}
+    ${swapped?`<button class="btn ghost block mt8" data-act="unswap">Volver a la receta original</button>`:""}
+    ${ex.length?`<div class="hr"></div><div class="small muted">Ingredientes que has quitado (toca para permitirlos otra vez):</div><div class="chips mt8">${ex.map(id=>`<button class="chip" data-unexcl="${id}">${esc(shortName(id))} ✕</button>`).join("")}</div>`:""}
+    ${hid.length?`<button class="linkbtn mt8" data-act="unhide">Recuperar ${hid.length} ${hid.length===1?"receta oculta":"recetas ocultas"}</button>`:""}
+  </div>`;
+  s.hidden=false;
+}
+
+/* ============ ENTRENOS (ejercicios de free-exercise-db, dominio público) ============ */
+const EXR="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
+const EX={
+ "Dumbbell_Bench_Press":{n:"Press de banca con mancuernas",m:"Pecho, tríceps",db:1,c:"Tumbado en el banco, mancuernas a la altura del pecho. Empuja hacia arriba sin chocarlas y baja en 2 segundos hasta notar el estiramiento del pecho. Codos a unos 45° del cuerpo, no abiertos del todo."},
+ "Wide-Grip_Lat_Pulldown":{n:"Jalón al pecho, agarre ancho",m:"Dorsal (te da anchura de espalda)",c:"Agarra la barra algo más ancho que los hombros. Lleva los codos hacia las costillas y la barra a la parte alta del pecho, sin balancear el torso. Sube despacio hasta estirar del todo."},
+ "Dumbbell_Shoulder_Press":{n:"Press de hombros con mancuernas",m:"Hombros, tríceps",db:1,c:"Sentado con la espalda apoyada. Empuja las mancuernas hacia arriba hasta casi estirar los codos y baja hasta la altura de las orejas. No arquees la zona lumbar."},
+ "Seated_Cable_Rows":{n:"Remo sentado en polea",m:"Espalda media, dorsal",c:"Pecho alto y espalda recta. Tira del agarre hacia el ombligo juntando los omóplatos, aguanta 1 segundo y vuelve estirando los brazos sin encorvarte."},
+ "Side_Lateral_Raise":{n:"Elevaciones laterales",m:"Hombro lateral (el que ensancha)",db:1,c:"De pie con mancuernas ligeras. Sube los brazos hacia los lados hasta la altura de los hombros con el codo algo flexionado y baja despacio. Peso ligero y sin balanceo: es el ejercicio que más ancho te hace parecer."},
+ "Triceps_Pushdown":{n:"Extensión de tríceps en polea",m:"Tríceps",c:"Codos pegados a las costillas. Estira los brazos hacia abajo sin mover los codos y sube controlando hasta unos 90°."},
+ "Barbell_Curl":{n:"Curl de bíceps con barra",m:"Bíceps",c:"De pie, codos pegados al cuerpo. Sube la barra sin balancear la espalda y baja en 2–3 segundos hasta estirar del todo."},
+ "Goblet_Squat":{n:"Sentadilla goblet",m:"Cuádriceps, glúteos",c:"Sujeta una mancuerna contra el pecho. Pies algo más anchos que las caderas. Baja con la espalda recta hasta que los muslos queden paralelos al suelo y sube empujando el suelo."},
+ "Stiff-Legged_Dumbbell_Deadlift":{n:"Peso muerto rumano con mancuernas",m:"Femoral, glúteos, lumbar",db:1,c:"Mancuernas pegadas a las piernas y rodillas casi estiradas. Lleva la cadera hacia atrás y baja con la espalda recta hasta notar el estiramiento detrás del muslo. Sube empujando la cadera hacia delante."},
+ "Leg_Press":{n:"Prensa de piernas",m:"Cuádriceps, glúteos",c:"Pies a la anchura de los hombros. Baja hasta unos 90° de rodilla sin despegar la zona lumbar del respaldo y empuja sin bloquear del todo las rodillas."},
+ "Lying_Leg_Curls":{n:"Curl femoral tumbado",m:"Femoral",c:"Tumbado boca abajo, con la cadera pegada al banco. Flexiona las rodillas llevando el rodillo hacia los glúteos y baja en 2–3 segundos."},
+ "Standing_Calf_Raises":{n:"Elevación de gemelos de pie",m:"Gemelos",c:"Sube de puntillas todo lo que puedas, aguanta 1 segundo arriba y baja hasta estirar del todo. Sin rebotes."},
+ "Plank":{n:"Plancha",m:"Abdomen",time:1,c:"Apoyado en antebrazos y puntas de los pies, cuerpo en línea recta de la cabeza a los talones. Aprieta abdomen y glúteos y respira con calma. Aguanta el tiempo indicado."},
+ "Incline_Dumbbell_Press":{n:"Press inclinado con mancuernas",m:"Pecho superior, hombros",db:1,c:"Banco a unos 30° (no más). Empuja las mancuernas hacia arriba y algo juntas; baja controlando hasta notar el estiramiento del pecho."},
+ "Close-Grip_Front_Lat_Pulldown":{n:"Jalón al pecho, agarre estrecho",m:"Dorsal, bíceps",c:"Agarre estrecho o neutro. Tira de la barra hacia la parte alta del pecho con los codos hacia abajo y atrás. Sube controlando."},
+ "One-Arm_Dumbbell_Row":{n:"Remo con mancuerna a una mano",m:"Espalda media, dorsal",db:1,c:"Apoya una rodilla y una mano en el banco con la espalda plana. Tira de la mancuerna hacia la cadera con el codo pegado al cuerpo y baja estirando del todo. Haz todas las repeticiones y cambia de lado."},
+ "Cable_Seated_Lateral_Raise":{n:"Elevación lateral en polea",m:"Hombro lateral",c:"Sentado, con la polea baja y un brazo cada vez. Sube el brazo hacia el lado hasta la altura del hombro y baja despacio. La polea mantiene la tensión todo el recorrido."},
+ "Reverse_Flyes":{n:"Pájaros (hombro posterior)",m:"Hombro posterior, espalda alta",db:1,c:"Inclinado hacia delante con la espalda recta y mancuernas ligeras. Abre los brazos hacia los lados hasta la altura de la espalda apretando los omóplatos. Baja despacio."},
+ "Hammer_Curls":{n:"Curl martillo",m:"Bíceps, antebrazo",db:1,c:"Mancuernas con agarre neutro (palmas mirándose). Sube alternando o a la vez, con los codos quietos, y baja controlando."},
+ "Cable_Rope_Overhead_Triceps_Extension":{n:"Extensión de tríceps sobre la cabeza en polea",m:"Tríceps",c:"De espaldas a la polea con la cuerda detrás de la cabeza. Estira los brazos hacia delante y arriba sin mover los codos y vuelve controlando."},
+ "Split_Squat_with_Dumbbells":{n:"Zancada estática con mancuernas",m:"Cuádriceps, glúteos",db:1,c:"Un pie delante y otro detrás, con mancuernas a los lados. Baja la rodilla de atrás hacia el suelo con el torso recto y sube empujando con la pierna de delante. Todas las repeticiones y cambias de pierna."},
+ "Barbell_Hip_Thrust":{n:"Hip thrust (puente de glúteos con barra)",m:"Glúteos",c:"Espalda alta apoyada en un banco y la barra sobre la cadera (con almohadilla). Sube la cadera hasta que el cuerpo quede recto y aprieta los glúteos 1 segundo arriba. Baja controlando."},
+ "Leg_Extensions":{n:"Extensión de cuádriceps",m:"Cuádriceps",c:"Sentado en la máquina, estira las piernas hasta arriba, aprieta 1 segundo y baja en 2–3 segundos sin dejar caer el peso."},
+ "Seated_Leg_Curl":{n:"Curl femoral sentado",m:"Femoral",c:"Sentado con la espalda apoyada y el rodillo sobre los tobillos. Lleva los talones hacia abajo y atrás y sube controlando."},
+ "Cable_Crunch":{n:"Crunch en polea",m:"Abdomen",c:"De rodillas frente a la polea con la cuerda junto a la cabeza. Curva el tronco llevando los codos hacia las rodillas usando el abdomen, no los brazos, y sube despacio."}
+};
+const E=(id,s,a,b,r,inc)=>({id,s,a,b,r,inc});
+const ROUT={
+ fbA:{name:"Cuerpo completo A",focus:"Todo el cuerpo con ejercicios básicos.",ex:[E("Goblet_Squat",3,8,12,90,2),E("Dumbbell_Bench_Press",3,8,12,120,2),E("Wide-Grip_Lat_Pulldown",3,8,12,120,2.5),E("Dumbbell_Shoulder_Press",2,10,12,90,2),E("Lying_Leg_Curls",2,10,15,60,2.5),E("Plank",2,30,60,60,0)]},
+ fbB:{name:"Cuerpo completo B",focus:"Todo el cuerpo, con más peso en pierna y espalda.",ex:[E("Leg_Press",3,10,12,90,5),E("Incline_Dumbbell_Press",3,8,12,120,2),E("Seated_Cable_Rows",3,10,12,90,2.5),E("Side_Lateral_Raise",3,12,15,60,1),E("Stiff-Legged_Dumbbell_Deadlift",3,10,12,90,2),E("Barbell_Curl",2,10,12,60,2.5),E("Triceps_Pushdown",2,10,15,60,2.5)]},
+ fbC:{name:"Cuerpo completo C",focus:"Todo el cuerpo, con trabajo extra de hombros y brazos.",ex:[E("Split_Squat_with_Dumbbells",3,8,12,90,2),E("Dumbbell_Bench_Press",3,8,12,120,2),E("Close-Grip_Front_Lat_Pulldown",3,10,12,90,2.5),E("Cable_Seated_Lateral_Raise",3,12,15,60,1),E("Hammer_Curls",2,10,12,60,2),E("Cable_Rope_Overhead_Triceps_Extension",2,10,15,60,2.5),E("Cable_Crunch",2,12,15,60,2.5)]},
+ torA:{name:"Torso A",focus:"Pecho, espalda, hombros y brazos. Prioridad: anchura de espalda y hombros.",ex:[E("Dumbbell_Bench_Press",3,8,10,120,2),E("Wide-Grip_Lat_Pulldown",3,8,12,120,2.5),E("Dumbbell_Shoulder_Press",3,8,12,90,2),E("Seated_Cable_Rows",3,10,12,90,2.5),E("Side_Lateral_Raise",3,12,15,60,1),E("Triceps_Pushdown",3,10,15,60,2.5),E("Barbell_Curl",3,10,12,60,2.5)]},
+ pieA:{name:"Pierna A",focus:"Cuádriceps, femoral, gemelos y abdomen.",ex:[E("Goblet_Squat",3,10,12,90,2),E("Stiff-Legged_Dumbbell_Deadlift",3,10,12,90,2),E("Leg_Press",3,10,12,90,5),E("Lying_Leg_Curls",3,10,15,60,2.5),E("Standing_Calf_Raises",4,12,15,60,2.5),E("Plank",3,30,60,60,0)]},
+ torB:{name:"Torso B",focus:"Pecho superior, espalda y hombros (laterales y posteriores) para ganar anchura.",ex:[E("Incline_Dumbbell_Press",3,8,12,120,2),E("Close-Grip_Front_Lat_Pulldown",3,10,12,90,2.5),E("One-Arm_Dumbbell_Row",3,10,12,90,2),E("Cable_Seated_Lateral_Raise",3,12,15,60,1),E("Reverse_Flyes",3,12,15,60,1),E("Hammer_Curls",3,10,12,60,2),E("Cable_Rope_Overhead_Triceps_Extension",3,10,15,60,2.5)]},
+ pieB:{name:"Pierna B",focus:"Zancadas, glúteo, cuádriceps, femoral y abdomen.",ex:[E("Split_Squat_with_Dumbbells",3,8,12,90,2),E("Barbell_Hip_Thrust",3,8,12,90,5),E("Leg_Extensions",3,12,15,60,2.5),E("Seated_Leg_Curl",3,10,15,60,2.5),E("Standing_Calf_Raises",4,12,15,60,2.5),E("Cable_Crunch",3,12,15,60,2.5)]},
+ hom:{name:"Hombros y brazos",focus:"Día extra para hombros anchos y brazos.",ex:[E("Dumbbell_Shoulder_Press",3,8,12,90,2),E("Side_Lateral_Raise",4,12,15,60,1),E("Reverse_Flyes",3,12,15,60,1),E("Barbell_Curl",3,10,12,60,2.5),E("Hammer_Curls",2,10,12,60,2),E("Triceps_Pushdown",3,10,15,60,2.5),E("Cable_Rope_Overhead_Triceps_Extension",2,10,15,60,2.5)]}
+};
+const kgTxt=x=>String(Math.round(x*100)/100).replace(".",",");
+function gymSorted(){return [...state.profile.gymDays].sort((a,b)=>a-b)}
+function routinePlan(){const n=gymSorted().length;return n<=1?["fbA"]:n===2?["fbA","fbB"]:n===3?["fbA","fbB","fbC"]:n===4?["torA","pieA","torB","pieB"]:["torA","pieA","torB","pieB","hom"]}
+function routineFor(d){const g=gymSorted(),i=g.indexOf(d);if(i<0)return null;const t=routinePlan();return ROUT[t[i%t.length]]}
+function didSets(date){const t=state.train&&state.train[date];return t?Object.values(t.ex||{}).flat().some(s=>s.r>0):false}
+function trainedOn(date){return didSets(date)}
+function trainStats(){
+  const ws=weekStartNow();let wk=0,tot=0;
+  for(const dt of Object.keys(state.train||{})){if(didSets(dt)){tot++;if(dt>=ws&&dt<=addDays(ws,6))wk++}}
+  return `<section class="stats mt8" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${wk} / ${gymSorted().length}</b><span>entrenos esta semana</span></div><div class="stat"><b>${tot}</b><span>entrenos apuntados en total</span></div></section>`;
+}
+function lastLog(id,date){
+  const ds=Object.keys(state.train).filter(x=>x<date).sort().reverse();
+  for(const x of ds){const s=(state.train[x].ex||{})[id];if(s){const ok=s.filter(v=>v.r>0);if(ok.length)return{date:x,sets:ok}}}
+  return null;
+}
+function suggest(e,last){
+  const x=EX[e.id],tm=!!x.time;
+  if(!last)return{kg:"",txt:tm?`Aguanta entre ${e.a} y ${e.b} segundos por serie.`:`Elige un peso con el que llegues a ${e.a} repeticiones dejando 1–2 en reserva. Es solo el punto de partida: apunta lo que uses.`};
+  const desc=last.sets.map(s=>tm?`${s.r} s`:`${s.k?kgTxt(s.k)+" kg × ":""}${s.r}`).join(" · ");
+  const hit=last.sets.length>=e.s&&last.sets.every(s=>s.r>=e.b);
+  const head=`Última vez (${niceDate(last.date)}): ${desc}. `;
+  if(tm)return{kg:"",txt:head+(hit?"Prueba a aguantar 5 segundos más.":"Intenta igualarlo o mejorarlo.")};
+  const mk=Math.max(...last.sets.map(s=>s.k||0));
+  if(hit&&mk>0)return{kg:Math.round((mk+e.inc)*100)/100,txt:head+`Lo completaste todo: hoy prueba ${kgTxt(mk+e.inc)} kg.`};
+  return{kg:mk||"",txt:head+`Repite${mk?" "+kgTxt(mk)+" kg":""} e intenta sumar repeticiones hasta llegar a ${e.b} en todas las series.`};
+}
+function defaultTrainDay(){
+  const g=gymSorted(),d=dayIdx(today());if(!g.length)return null;
+  if(g.includes(d))return d;
+  const nx=g.find(x=>x>d);return nx!=null?nx:g[g.length-1];
+}
+function renderEntreno(){
+  const g=gymSorted();
+  let h=header("Entreno","Tu rutina y tus pesos");
+  if(!g.length)return h+`<section class="panel"><p>No tienes días de gimnasio marcados. Añádelos en <b>Perfil → Tus datos</b> y aquí aparecerá tu rutina.</p></section>`;
+  if(ui.trainDay==null||!g.includes(ui.trainDay))ui.trainDay=defaultTrainDay();
+  const sel=ui.trainDay,ws=weekStartNow(),date=addDays(ws,sel),rt=routineFor(sel);
+  ui.trainDate=date;ui.trainName=rt.name;
+  const cur=(state.train[date]||{}).ex||{};
+  const done=rt.ex.filter(e=>(cur[e.id]||[]).some(s=>s.r>0)).length;
+  h+=`<div class="days" role="group" aria-label="Día de entreno">${g.map(i=>`<button data-tday="${i}" aria-pressed="${i===sel}" class="${i===dayIdx(today())?"today":""}">${DAYS_S[i]}<small>${routineFor(i).name.replace("Cuerpo completo","CC")}</small></button>`).join("")}</div>`;
+  h+=`<section class="panel"><div class="row between"><h2>${esc(rt.name)}</h2><span class="small muted" id="trainProg">${done} de ${rt.ex.length} apuntados</span></div>
+   <p class="small">${esc(rt.focus)} ${DAYS[sel]} ${niceDate(date)}.</p>
+   <details><summary>Cómo entrenar</summary><ul class="small" style="padding-left:18px;margin:8px 0 0"><li>Calienta 5 minutos (bici o cinta suave) y haz 1–2 series ligeras del primer ejercicio.</li><li>Termina cada serie dejando 1–2 repeticiones en reserva. Si la técnica se rompe, baja el peso.</li><li>Cuando completes todas las series en el máximo de repeticiones, sube un poco el peso la próxima vez. Esa es la forma de crecer.</li><li>En los ejercicios con mancuernas, apunta los kilos de <b>una sola mancuerna</b>.</li><li>Si un movimiento es nuevo, pide a alguien del gimnasio que te revise la técnica.</li></ul></details></section>`;
+  for(const e of rt.ex){
+    const x=EX[e.id],last=lastLog(e.id,date),sg=suggest(e,last),saved=cur[e.id]||[];
+    let rows="";
+    for(let i=0;i<e.s;i++){
+      const sv=saved[i],kv=sv&&sv.k!=null&&sv.k!==0?sv.k:(sv&&sv.r>0?"":sg.kg),rv=sv&&sv.r>0?sv.r:"",ph=last&&last.sets[i]?last.sets[i].r:e.a;
+      rows+=`<div class="setrow"><span class="sn">${i+1}</span>${x.time?"":`<input class="inp sm" inputmode="decimal" data-tk="${e.id}|${i}" value="${kv===""?"":String(kv).replace(".",",")}" placeholder="kg" aria-label="Kilos serie ${i+1}"><span class="muted">kg ×</span>`}<input class="inp sm" inputmode="numeric" data-tr="${e.id}|${i}" value="${rv}" placeholder="${ph}" aria-label="${x.time?"Segundos":"Repeticiones"} serie ${i+1}"><span class="muted">${x.time?"seg":"rep"}</span></div>`;
+    }
+    h+=`<article class="exc"><h3 style="font-stretch:105%">${esc(x.n)}</h3><div class="mm">${esc(x.m)} · ${e.s} × ${e.a}${e.b!==e.a?"–"+e.b:""}${x.time?" seg":""} · descanso ${e.r>=120?"2 min":e.r>=90?"90 s":"60 s"}${x.db?" · kg por mancuerna":""}</div>
+     <div class="sug">${esc(sg.txt)}</div>${rows}
+     <details><summary>Cómo hacerlo</summary><p class="small">${esc(x.c)}</p><div class="imgs"><img loading="lazy" src="${EXR}${e.id}/0.jpg" alt="${esc(x.n)}, posición inicial"><img loading="lazy" src="${EXR}${e.id}/1.jpg" alt="${esc(x.n)}, posición final"></div></details></article>`;
+  }
+  h+=`<p class="hint">Ejercicios e imágenes de <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">free-exercise-db</a> (dominio público). Rutina de ${g.length} días para principiantes, no sustituye a un entrenador. Si notas dolor (no el cansancio normal del músculo), para y consúltalo.</p>`;
+  return h;
+}
+function updTrainProg(){
+  const rt=routineFor(ui.trainDay);if(!rt)return;const cur=(state.train[ui.trainDate]||{}).ex||{};
+  const el=$("#trainProg");if(el)el.textContent=`${rt.ex.filter(e=>(cur[e.id]||[]).some(s=>s.r>0)).length} de ${rt.ex.length} apuntados`;
+}
+function saveSetRow(row){
+  const kI=row.querySelector("[data-tk]"),rI=row.querySelector("[data-tr]");
+  const src=(kI||rI).dataset.tk||rI.dataset.tr,[id,i]=src.split("|"),idx=+i;
+  const num=v=>{const n=parseFloat(String(v).replace(",","."));return isFinite(n)&&n>0?n:0};
+  const dt=ui.trainDate;
+  const tr=state.train[dt]=state.train[dt]||{rt:ui.trainName,ex:{}};
+  const arr=tr.ex[id]=tr.ex[id]||[];
+  while(arr.length<=idx)arr.push({k:0,r:0});
+  arr[idx]={k:kI?num(kI.value):0,r:num(rI.value)};
+  persist();updTrainProg();
+}
+
 /* ============ EVENTOS ============ */
 function bindAfter(){
   hydratePhotos();
@@ -918,22 +1130,39 @@ function bindAfter(){
   }));
 }
 document.addEventListener("click",async e=>{
+  if(e.target.id==="sheet"){closeSheet();return}
   const t=e.target.closest("button,[data-shop],[data-meal],[data-act]");if(!t)return;
   const ds=t.dataset;
-  if(ds.tab){ui.tab=ds.tab;ui.view=null;render();window.scrollTo(0,0);return}
+  if(ds.tab){ui.tab=ds.tab;ui.view=null;if(ds.tab==="entreno")ui.trainDay=null;render();window.scrollTo(0,0);return}
   if(ds.day!=null&&t.closest(".days")){ui.planDay=+ds.day;render();return}
   if(ds.daychip){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")==="true"?"false":"true");return}
   if(ds.excl){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")==="true"?"false":"true");return}
   if(ds.pose){ui.cmpPose=ds.pose;render();return}
   if(ds.rate){ui.draft.rate[ds.rate]=+ds.v;t.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===t));return}
-  if(ds.swap){
-    const ws=weekStartNow(),[d,slot]=ds.swap.split("-");const list=recipesFor(slot);const cur=recipeAt(ws,+d,slot);
-    const next=list[(list.findIndex(r=>r.id===cur.id)+1)%list.length];
+  if(ds.swap){const[dd,slot]=ds.swap.split("-");openSheet(+dd,slot);return}
+  if(ds.scope){ui.sheet.scope=ds.scope;renderSheet();return}
+  if(ds.pick){
+    const sh=ui.sheet,ws=weekStartNow(),batch=(sh.slot==="comida"||sh.slot==="cena");
     state.swaps[ws]=state.swaps[ws]||{};
-    const blockDays=(slot==="comida"||slot==="cena")?[[0,1,2],[3,4],[5,6]][blockOf(+d)]:[+d];
-    for(const dd of blockDays)state.swaps[ws][`${dd}-${slot}`]=next.id;
-    persist();render();if(blockDays.length>1)toast(`Cambiado en todo el bloque de batch cooking`);return;
+    const days=(sh.scope==="block"&&batch)?batchDays(sh.d):[sh.d];
+    for(const dd of days)state.swaps[ws][`${dd}-${sh.slot}`]=ds.pick;
+    persist();closeSheet();render();toast(days.length>1?"Cambiado en todo el bloque":"Comida cambiada");return;
   }
+  if(ds.hide){
+    const r=RECIPES.find(x=>x.id===ds.hide);
+    const bad=r.slots.find(s=>recipesFor(s).filter(x=>x.id!==r.id).length<2);
+    if(bad){toast(`No puedo ocultar más recetas de ${SLOT_INFO[bad].l.toLowerCase()}`);return}
+    state.hidden.push(r.id);cleanSwaps();persist();render();renderSheet();toast("No volverá a salir esa receta");return;
+  }
+  if(ds.noing){
+    const b=breaksPlan(ds.noing),nm=shortName(ds.noing);
+    if(b){toast(`Sin ${nm.toLowerCase()} no me quedan recetas de ${b.toLowerCase()}`);return}
+    state.profile.exclude.push(ds.noing);cleanSwaps();persist();render();toast(`Hecho: ya no saldrá ${nm.toLowerCase()}`);return;
+  }
+  if(ds.unexcl){
+    state.profile.exclude=state.profile.exclude.filter(x=>x!==ds.unexcl);persist();render();renderSheet();return;
+  }
+  if(ds.tday!=null){ui.trainDay=+ds.tday;render();return}
   if(ds.shop!=null&&t.matches("input")){
     const ws=weekStartNow();const arr=new Set(state.shop[ws]||[]);t.checked?arr.add(ds.shop):arr.delete(ds.shop);
     state.shop={[ws]:[...arr]};persist();t.closest("label").classList.toggle("got",t.checked);return;
@@ -943,6 +1172,11 @@ document.addEventListener("click",async e=>{
     pruneLog();persist();render();return;
   }
   const act=ds.act;if(!act)return;
+  if(act==="closeSheet"){closeSheet();return}
+  if(act==="unswap"){const sh=ui.sheet,ws=weekStartNow(),batch=(sh.slot==="comida"||sh.slot==="cena");
+    const days=(sh.scope==="block"&&batch)?batchDays(sh.d):[sh.d];for(const dd of days)delete (state.swaps[ws]||{})[`${dd}-${sh.slot}`];
+    persist();closeSheet();render();return}
+  if(act==="unhide"){state.hidden=[];persist();render();renderSheet();return}
   if(act==="crea"){const td=today();state.log[td]=state.log[td]||{m:{}};state.log[td].crea=t.checked;persist();render();return}
   if(act==="finishOnb"){const p=readProfileForm(ui.onb);if(!p)return;state=newState(p);persist();ui.tab="hoy";render();window.scrollTo(0,0);return}
   if(act==="saveW"){
@@ -971,6 +1205,11 @@ document.addEventListener("click",async e=>{
     if(act==="signup"&&!res.data.session){ui.authMsg="Cuenta creada. Confirma el email que te ha llegado y luego entra.";render()}
     return}
 });
+document.addEventListener("input",e=>{
+  const t=e.target;if(!t.dataset||!(t.dataset.tk||t.dataset.tr))return;
+  saveSetRow(t.closest(".setrow"));
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&ui.sheet)closeSheet()});
 function pruneLog(){const keys=Object.keys(state.log).sort();while(keys.length>120)delete state.log[keys.shift()]}
 async function offerDownload(filename,data){
   const type=filename.endsWith(".ics")?"text/calendar":"application/json";

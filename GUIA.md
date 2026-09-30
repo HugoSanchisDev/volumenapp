@@ -8,10 +8,28 @@ Qué hay en la carpeta:
 |---|---|
 | `index.html` | La app entera |
 | `productos.json` | Productos reales de Mercadona (ids, nombres, precios) |
+| `exercises.json` | Base de ejercicios de gimnasio (nombre, músculo, equipo) |
 | `actualizar_productos.py` | Script que actualiza precios y nutrición cada semana |
 | `.github/workflows/actualizar-precios.yml` | Lanza el script solo cada domingo |
 | `supabase.sql` | Crea tu base de datos y la protege |
 | `manifest.webmanifest`, `sw.js`, iconos | Para que se instale como app y abra sin cobertura |
+
+---
+
+## Qué puedes hacer ahora
+
+- **Objetivo**: elige en tu perfil si quieres ganar masa, definir o mantenerte; los cálculos, el ritmo esperado y los mensajes del check-in se adaptan.
+- **Recetas e ingredientes propios**: en la pestaña Cocina puedes crear, editar y borrar tanto recetas como ingredientes (y sus valores nutricionales). Las recetas de fábrica son solo el punto de partida.
+- **Despensa**: lleva el stock de lo que tienes en casa; la lista de la compra descuenta automáticamente esas cantidades, y marcar algo como comprado lo suma a la despensa.
+- **Detectar ingredientes por foto**: en Cocina → Despensa, hazle una foto a tu nevera o armario y la IA (Claude, de Anthropic) intenta reconocer lo que hay. Hace falta pegar tu propia clave de Anthropic en Perfil → Claves de API.
+- **Gimnasio**: en la pestaña Gym crea tus rutinas (ejercicios, series, reps, peso objetivo) y asígnales días de la semana. Cada día de entreno, en Hoy tienes un botón para registrar lo que has hecho de verdad, como en Hevy. Si tienes Hevy Pro, puedes pegar tu clave para importar tu biblioteca de ejercicios (si el navegador de tu móvil bloquea la conexión directa por CORS, la app avisa y sigue funcionando igual con su base de ejercicios propia).
+
+### Sobre las claves de Anthropic y Hevy que pegas en Perfil
+
+Igual que la clave de Supabase, estas claves quedan guardadas en tu cuenta y viajan con la app, pero a diferencia de la de Supabase **si alguien mira el tráfico de tu navegador podría llegar a usarlas** (a tu costa, en el caso de Anthropic). Por eso:
+- Pon un **límite de gasto mensual bajo** en la consola de Anthropic (console.anthropic.com → Billing).
+- No compartas el enlace de tu app con nadie en quien no confíes.
+- Si alguna vez sospechas que una clave se ha filtrado, revócala en la consola del proveedor y pega una nueva.
 
 ---
 

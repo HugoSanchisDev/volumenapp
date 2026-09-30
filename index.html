@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Volumen, tu plan para ganar masa</title>
+<title>Volumen, tu app de nutrición y gimnasio</title>
 <meta name="theme-color" content="#2450C6">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -34,6 +34,15 @@
   --prot:#E86B58; --carb:#EAB050; --fat:#82BD7C; --warn:#F2A461; --warn-soft:#33241A;
   color-scheme:dark;
 }
+/* El acento cambia un poco según tu objetivo: azul (volumen), verde (definir), violeta (mantener) */
+body[data-goal="deficit"]{--accent:#2D9B63;--soft:#DFF3E7}
+body[data-goal="mantenimiento"]{--accent:#7A4FD6;--soft:#EAE2FB}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) body[data-goal="deficit"]{--accent:#5FD897;--soft:#172A20}
+  :root:not([data-theme="light"]) body[data-goal="mantenimiento"]{--accent:#B39CF2;--soft:#241C33}
+}
+:root[data-theme="dark"] body[data-goal="deficit"]{--accent:#5FD897;--soft:#172A20}
+:root[data-theme="dark"] body[data-goal="mantenimiento"]{--accent:#B39CF2;--soft:#241C33}
 *,*::before,*::after{box-sizing:inherit}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);
@@ -54,7 +63,7 @@ p{margin:.4em 0}
 .top .sub{font-size:15px;color:var(--muted);margin-top:4px}
 .sync{font-size:13px;color:var(--muted);text-align:right;white-space:nowrap}
 
-.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 1px 2px rgba(20,35,58,.04)}
 .panel.flat{background:transparent}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .between{justify-content:space-between}
@@ -64,6 +73,9 @@ p{margin:.4em 0}
 
 .btn{appearance:none;border:1.5px solid var(--ink);background:transparent;border-radius:12px;padding:11px 16px;font-weight:700;cursor:pointer;min-height:44px}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (hover:hover){.btn:hover{opacity:.9}.btn.primary:hover{opacity:.88}}
+.btn:active{transform:translateY(1px)}
+@media (prefers-reduced-motion:no-preference){.btn{transition:opacity .12s ease,transform .08s ease}}
 .btn.block{width:100%}
 .btn.ghost{border-color:var(--line)}
 .btn.sm{padding:6px 12px;min-height:34px;font-size:14px;border-radius:10px}
@@ -190,48 +202,40 @@ details summary::-webkit-details-marker{display:none}
 
 .supp{border-top:1px solid var(--line);padding:12px 0}
 .supp:first-of-type{border-top:0}
+.traindays{display:flex;flex-direction:column;gap:6px}
+.trainday{padding:6px 0;border-bottom:1px dashed var(--line)}
+.trainday .inp{max-width:130px}
+.rcrow{margin-bottom:8px}
+.rcrow .inp{padding:8px 8px}
 
-nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb, var(--card) 92%, transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
-nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
-nav.tabs button{border:0;background:transparent;padding:9px 2px 10px;cursor:pointer;font-size:12px;font-weight:650;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;min-height:56px}
-nav.tabs button svg{width:22px;height:22px}
+nav.tabs .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
+nav.tabs button{border:0;background:transparent;padding:8px 1px 9px;cursor:pointer;font-size:10.5px;font-weight:650;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;min-height:54px}
+nav.tabs button svg{width:20px;height:20px}
+nav.tabs button span{white-space:nowrap}
 nav.tabs button[aria-current="page"]{color:var(--accent)}
-nav.tabs button .badge{width:7px;height:7px;border-radius:50%;background:var(--warn);position:absolute;margin-left:18px}
+nav.tabs button[aria-current="page"] svg{transform:scale(1.08)}
+@media (prefers-reduced-motion:no-preference){nav.tabs button svg{transition:transform .15s ease}}
+nav.tabs button .badge{width:7px;height:7px;border-radius:50%;background:var(--warn);position:absolute;margin-left:16px}
 
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:12px;font-weight:650;font-size:14px;z-index:20;max-width:90vw}
 .center{text-align:center}
 .mt0{margin-top:0}.mt8{margin-top:8px}.mt16{margin-top:16px}
 .hr{height:1px;background:var(--line);margin:14px 0}
 @media (prefers-reduced-motion:no-preference){ .track i{transition:width .4s ease} }
-
-/* cajón para cambiar comida */
-#sheet{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;background:rgba(10,15,22,.55)}
-#sheet[hidden]{display:none}
-.sheetbox{background:var(--paper);width:100%;max-width:600px;max-height:88vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:16px 18px calc(24px + env(safe-area-inset-bottom,0px))}
-.opt{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px 14px;margin:10px 0}
-.opt.cur{border:2px solid var(--accent)}
-.linkbtn{background:none;border:0;padding:6px 0;color:var(--muted);text-decoration:underline;font-size:13px;cursor:pointer;min-height:32px}
-/* entrenos */
-.exc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:10px 0}
-.setrow{display:flex;align-items:center;gap:8px;margin:6px 0}
-.setrow .sn{width:22px;font-weight:800;color:var(--muted)}
-.inp.sm{width:80px;min-height:42px;padding:6px 10px;text-align:center}
-.sug{font-size:13px;background:var(--soft);border-radius:10px;padding:8px 10px;margin:8px 0}
-.imgs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.imgs img{border-radius:12px;background:var(--soft);width:100%;height:auto}
-.exc a,.panel a{color:var(--accent)}
 </style>
 </head>
 <body>
 <div id="app" class="wrap"><p class="muted" style="padding-top:40px">Cargando tu plan…</p></div>
 <nav class="tabs" id="tabs" hidden></nav>
 <div id="toast" class="toast" hidden></div>
-<div id="sheet" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
 <script>
+/* ============ CONFIGURACIÓN: pega aquí los datos de tu proyecto de Supabase ============ */
+const SUPABASE_URL="https://wondgkfpkccnkmjflvoh.supabase.co/rest/v1/";      // ej. https://abcdefgh.supabase.co
+const SUPABASE_KEY="sb_publishable_bKe5JXWFTYDRnxEru1ftpQ_E0NZFFdX";    // la "anon" o "publishable" key (nunca la service_role)
 const BUCKET="fotos";
 
 /* ============ DATOS: productos (valores por 100 g, precio orientativo €/kg) ============ */
@@ -336,26 +340,46 @@ const RECIPES=[
  {id:"pastaAtun",n:"Pasta con atún y tomate",slots:["cena","comida"],min:15,items:[["pasta",100,"C"],["atun",110,"P"],["tomateTri",150,"V"],["aove",10,"F"]],
   steps:["Cuece la pasta.","Calienta el tomate con el aceite, orégano y el atún escurrido.","Mezcla y listo."]},
  {id:"tresDelicias",n:"Arroz tres delicias casero",slots:["cena","comida"],min:20,batch:true,items:[["arroz",110,"C"],["huevos",120,"P"],["pollo",100,"P"],["salteado",150,"V"],["aove",10,"F"]],
-  steps:["Usa arroz ya cocido (mejor del día anterior).","Haz un revuelto con los huevos y resérvalo; saltea el pollo en dados y las verduras.","Añade el arroz y el revuelto, saltea 3 min con salsa de soja."]},
- {id:"tostadasPB",n:"Tostadas de cacahuete y plátano con yogur",slots:["desayuno","merienda"],min:5,items:[["panInt",90,"C"],["cacahuete",25,"F"],["platano",120,"C"],["yogurP",200,"P"]],
-  steps:["Tuesta el pan.","Úntalo con la crema de cacahuete y pon el plátano en rodajas encima.","Acompaña con el yogur proteico."]},
- {id:"overnight",n:"Avena en frío (overnight oats)",slots:["desayuno","media"],min:5,portable:true,items:[["avena",80,"C"],["lecheS",250,"C"],["yogurP",150,"P"],["platano",100,"C"],["cacahuete",12,"F"]],
-  steps:["La noche anterior mezcla en un bote la avena, la leche y el yogur.","Déjalo en la nevera toda la noche.","Por la mañana añade el plátano en rodajas y la crema de cacahuete. Sin cocinar y listo para llevar."]},
- {id:"huevosPan",n:"Huevos revueltos con pan y plátano",slots:["desayuno"],min:10,items:[["barra",100,"C"],["huevos",120,"P"],["claras",100,"P"],["platano",120,"C"],["aove",8,"F"]],
-  steps:["Calienta el aceite en una sartén y haz el revuelto con los huevos y las claras a fuego suave.","Sirve con el pan.","El plátano, de postre o a mordiscos."]},
- {id:"wrapPavo",n:"Wrap de pavo, queso y espinacas",slots:["media","merienda"],min:5,portable:true,items:[["wrap",120,"C"],["pavo",90,"P"],["quesoBatido",60,"P"],["queso",25,"F"],["espinacas",30,"V"]],
-  steps:["Unta las tortillas con el queso batido.","Añade el pavo, el queso en lonchas y las espinacas.","Enrolla apretado y corta por la mitad."]},
- {id:"sandwichPavo",n:"Sándwich de pavo y queso",slots:["media","merienda"],min:4,portable:true,items:[["panInt",100,"C"],["pavo",90,"P"],["queso",40,"F"],["espinacas",25,"V"]],
-  steps:["Monta el sándwich con el pavo, el queso y las espinacas.","Si quieres, tuéstalo 2 minutos en la sandwichera o la sartén.","Envuélvelo para llevártelo."]},
- {id:"polloHorno",n:"Pollo al horno con patatas y brócoli",slots:["comida","cena"],min:35,batch:true,items:[["patata",350,"C"],["pollo",180,"P"],["brocoli",200,"V"],["aove",12,"F"]],
-  steps:["Corta las patatas en gajos y ponlas en la bandeja con la mitad del aceite y sal; horno a 200 °C.","A los 10 minutos añade el pollo en filetes con especias (pimentón, ajo en polvo) y el brócoli.","Hornea 20 minutos más. Reparte en tápers."]},
- {id:"hamburguesas",n:"Hamburguesas de ternera con arroz y pimiento",slots:["comida","cena"],min:25,batch:true,items:[["arroz",110,"C"],["picada",160,"P"],["pimiento",100,"V"],["cebolla",50,"V"],["aove",8,"F"]],
-  steps:["Cuece el arroz.","Forma hamburguesas con la carne picada, sal y pimienta y hazlas a la plancha 4 minutos por lado.","Saltea el pimiento y la cebolla con el aceite. Sirve todo junto."]},
- {id:"pastaPollo",n:"Pasta con pollo y brócoli",slots:["comida","cena"],min:20,batch:true,items:[["pasta",110,"C"],["pollo",160,"P"],["brocoli",150,"V"],["aove",12,"F"],["queso",20,"F"]],
-  steps:["Cuece la pasta y, los últimos 4 minutos, el brócoli en la misma olla.","Dora el pollo en dados con el aceite y ajo.","Mezcla todo y funde por encima el queso."]},
- {id:"garbanzosAtun",n:"Garbanzos con atún y arroz",slots:["comida"],min:15,items:[["garbanzos",250,"C"],["arroz",60,"C"],["atun",110,"P"],["pimiento",60,"V"],["aove",10,"F"]],
-  steps:["Cuece el arroz (o usa uno ya hecho).","Calienta los garbanzos escurridos con el pimiento y el aceite 5 minutos.","Añade el atún y el arroz, mezcla y sazona con pimentón."]}
+  steps:["Usa arroz ya cocido (mejor del día anterior).","Haz un revuelto con los huevos y resérvalo; saltea el pollo en dados y las verduras.","Añade el arroz y el revuelto, saltea 3 min con salsa de soja."]}
 ];
+/* Productos y recetas del usuario se fusionan con las plantillas base */
+function PX(id){return (state&&state.products&&state.products[id])||PRODUCTS[id]}
+function allProducts(){return{...PRODUCTS,...(state?state.products:{})}}
+function allRecipes(){return (state&&state.recipes&&state.recipes.length)?state.recipes:RECIPES}
+/* Base de ejercicios (exercises.json) + los que el usuario cree */
+let EXERCISES={};
+async function loadExercises(){
+  try{
+    const r=await fetch("exercises.json",{cache:"no-cache"});if(!r.ok)return;
+    const j=await r.json();
+    for(const e of j.ejercicios||[])EXERCISES[e.id]=e;
+    render();
+  }catch(e){}
+}
+function allExercises(){return{...EXERCISES,...(state?state.customExercises:{})}}
+function EX(id){return (state&&state.customExercises&&state.customExercises[id])||EXERCISES[id]||{id,n:id,grupo:"",equipo:""}}
+/* Integración opcional con Hevy: solo enriquece tu biblioteca de ejercicios.
+   La API de Hevy está pensada para uso de servidor y puede bloquear peticiones
+   directas desde el navegador (CORS); si falla, la app sigue funcionando igual
+   con la base de ejercicios local. */
+async function trySyncHevy(silent){
+  const key=state.apiKeys.hevy;
+  if(!key){if(!silent)toast("Pega tu clave de Hevy en Perfil primero");return}
+  try{
+    const res=await fetch("https://api.hevyapp.com/v1/exercise_templates?page=1&pageSize=100",{headers:{"api-key":key}});
+    if(!res.ok)throw new Error(String(res.status));
+    const j=await res.json();
+    let n=0;
+    for(const et of j.exercise_templates||[]){
+      state.customExercises["hevy:"+et.id]={id:"hevy:"+et.id,n:et.title,grupo:et.primary_muscle_group||"",equipo:et.equipment||""};
+      n++;
+    }
+    if(n){persist();toast(`${n} ejercicios importados de Hevy`);render()}
+    else if(!silent)toast("Hevy no devolvió ejercicios");
+  }catch(e){
+    if(!silent)toast("No se pudo conectar con Hevy desde el navegador (puede bloquearlo por CORS). Se sigue usando la base de ejercicios local.");
+  }
+}
 const SLOTS=["desayuno","media","comida","merienda","cena"];
 const SLOT_INFO={desayuno:{l:"Desayuno",k:.22,p:.2},media:{l:"Media mañana",k:.15,p:.15},comida:{l:"Comida",k:.28,p:.25},merienda:{l:"Merienda",k:.15,p:.15},cena:{l:"Cena",k:.20,p:.25}};
 const DAYS=["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
@@ -388,16 +412,42 @@ function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTi
 const configured=!SUPABASE_URL.startsWith("PEGA")&&!SUPABASE_KEY.startsWith("PEGA");
 const sb=(configured&&window.supabase)?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 let state=null, session=null, syncMsg="", dirty=false, booted=false;
-const ui={tab:"hoy",planDay:dayIdx(today()),view:null,cmpA:null,cmpB:null,cmpPose:"front",cmpPos:50,draft:null,lastResult:null,onb:null,authMsg:""};
+const ui={tab:"hoy",planDay:dayIdx(today()),view:null,cmpA:null,cmpB:null,cmpPose:"front",cmpPos:50,draft:null,lastResult:null,onb:null,authMsg:"",
+  cocinaTab:"recetas",gymTab:"hoy",editRecipe:null,editIngredient:null,editRutina:null,pantryFilter:"",detect:null};
 const uid=()=>session&&session.user.id;
 const LS_KEY=()=>"volumen-app-v1-"+(uid()||"anon");
 
-function defaultProfile(){return{sexo:"hombre",edad:23,peso:56,altura:170,nivel:"principiante",actividad:"media",
-  gymDays:[0,1,3,4],padelDays:[5],despertar:"07:30",trabajo:"09:00",entreno:"18:30",dormir:"23:30",
+const SPORT_TYPES=[["gym","Gimnasio"],["padel","Pádel"],["running","Running"],["otro","Otro"]];
+function sportLabel(td){if(!td)return"";if(td.t==="otro")return td.label||"Otro deporte";return(SPORT_TYPES.find(([k])=>k===td.t)||[,td.t])[1]}
+function goalTagline(goal){return{volumen:"Tu plan para ganar masa muscular",deficit:"Tu plan para definir sin perder músculo",mantenimiento:"Tu plan para mantenerte en tu peso"}[goal||"volumen"]}
+function defaultProfile(){return{sexo:"hombre",edad:23,peso:56,altura:170,nivel:"principiante",actividad:"media",goal:"volumen",
+  trainingDays:[{d:0,t:"gym"},{d:1,t:"gym"},{d:3,t:"gym"},{d:4,t:"gym"},{d:5,t:"padel"}],
+  despertar:"07:30",trabajo:"09:00",entreno:"18:30",dormir:"23:30",
   presupuesto:65,super:"ambos",exclude:[],cafeina:false}}
-function newState(profile){return{v:1,createdAt:today(),profile,kcalAdj:0,lowStreak:0,weights:[],checkins:[],log:{},swaps:{},shop:{},train:{},hidden:[],updatedAt:Date.now()}}
+function newState(profile){return{v:2,createdAt:today(),profile,kcalAdj:0,lowStreak:0,weights:[],checkins:[],log:{},swaps:{},shop:{},
+  apiKeys:{anthropic:"",hevy:""},products:{},recipes:RECIPES.map(r=>({...r,items:r.items.map(i=>[...i]),steps:[...r.steps]})),
+  pantry:{},customExercises:{},routines:[],workoutLog:{},updatedAt:Date.now()}}
+/* Migra estados antiguos (gymDays/padelDays sueltos, sin recetas/ingredientes propios, etc.) a la forma actual */
+function migrateState(s){
+  if(!s)return s;
+  const p=s.profile;
+  if(p&&!p.trainingDays){
+    p.trainingDays=[...(p.gymDays||[]).map(d=>({d,t:"gym"})),...(p.padelDays||[]).map(d=>({d,t:"padel"}))];
+    delete p.gymDays;delete p.padelDays;
+  }
+  if(p&&!p.goal)p.goal="volumen";
+  if(!s.apiKeys)s.apiKeys={anthropic:"",hevy:""};
+  if(!s.products)s.products={};
+  if(!s.recipes)s.recipes=RECIPES.map(r=>({...r,items:r.items.map(i=>[...i]),steps:[...r.steps]}));
+  if(!s.pantry)s.pantry={};
+  if(!s.customExercises)s.customExercises={};
+  if(!s.routines)s.routines=[];
+  if(!s.workoutLog)s.workoutLog={};
+  if(!s.v||s.v<2)s.v=2;
+  return s;
+}
 
-function loadLocal(){try{const s=localStorage.getItem(LS_KEY());return s?JSON.parse(s):null}catch(e){return null}}
+function loadLocal(){try{const s=localStorage.getItem(LS_KEY());return s?migrateState(JSON.parse(s)):null}catch(e){return null}}
 function saveLocal(){try{localStorage.setItem(LS_KEY(),JSON.stringify(state))}catch(e){}}
 function setSync(m){syncMsg=m;const s=$("#sync");if(s)s.textContent=m}
 let saving=false,pendingSave=false,saveTimer=null;
@@ -417,13 +467,14 @@ async function loadState(){
   state=loadLocal();
   const {data,error}=await sb.from("app_state").select("data").eq("user_id",uid()).maybeSingle();
   if(error){setSync("Sin conexión: usando los datos del móvil");return}
-  const remote=data&&data.data;
+  const remote=data&&migrateState(data.data);
   if(remote&&(!state||(remote.updatedAt||0)>=(state.updatedAt||0))){state=remote;saveLocal();syncMsg="Guardado en la nube"}
   else if(state){dirty=true;flush()}
   else syncMsg="";
 }
 async function boot(){
   loadCatalog();
+  loadExercises();
   if(!sb){render();return}
   const {data}=await sb.auth.getSession();
   session=data.session;
@@ -441,30 +492,40 @@ function currentWeight(){
   const ci=state.checkins; if(ci.length)return ci[ci.length-1].avg;
   return state.profile.peso;
 }
-function gainRange(nivel){return{principiante:[0.2,0.4],intermedio:[0.15,0.3],avanzado:[0.1,0.2]}[nivel]}
+const GOALS=[["volumen","Ganar masa"],["deficit","Definir"],["mantenimiento","Mantenerme"]];
+function gainRange(goal,nivel){
+  if(goal==="deficit")return{principiante:[-0.8,-0.5],intermedio:[-0.6,-0.35],avanzado:[-0.5,-0.25]}[nivel];
+  if(goal==="mantenimiento")return[-0.15,0.15];
+  return{principiante:[0.2,0.4],intermedio:[0.15,0.3],avanzado:[0.1,0.2]}[nivel];
+}
 function calc(){
-  const p=state.profile,w=currentWeight();
+  const p=state.profile,w=currentWeight(),goal=p.goal||"volumen";
   const bmr=10*w+6.25*p.altura-5*p.edad+(p.sexo==="hombre"?5:-161);
   const base={baja:1.25,media:1.35,alta:1.5}[p.actividad];
-  const factor=base+p.gymDays.length*0.04+p.padelDays.length*0.04;
+  const factor=base+(p.trainingDays||[]).length*0.04;
   const tdee=bmr*factor;
-  const surplus={principiante:400,intermedio:300,avanzado:200}[p.nivel];
-  const kcal=Math.round((tdee+surplus+state.kcalAdj)/10)*10;
-  const P=Math.round(2*w),F=Math.round(1*w),C=Math.round((kcal-P*4-F*9)/4);
-  return{w,bmr,base,factor,tdee,surplus,adj:state.kcalAdj,kcal,P,F,C,range:gainRange(p.nivel)};
+  const surplus=goal==="deficit"?-{principiante:500,intermedio:400,avanzado:300}[p.nivel]
+    :goal==="mantenimiento"?0
+    :{principiante:400,intermedio:300,avanzado:200}[p.nivel];
+  let kcal=Math.round((tdee+surplus+state.kcalAdj)/10)*10;
+  const P=Math.round((goal==="deficit"?2.2:2)*w),F=Math.round((goal==="deficit"?0.8:1)*w);
+  const floor=Math.round((P*4+F*9+250)/10)*10;
+  if(goal==="deficit")kcal=Math.max(kcal,floor);
+  const C=Math.max(0,Math.round((kcal-P*4-F*9)/4));
+  return{w,bmr,base,factor,tdee,surplus,adj:state.kcalAdj,kcal,P,F,C,goal,range:gainRange(goal,p.nivel)};
 }
-function macrosOf(items){let k=0,p=0,c=0,f=0;for(const[id,g]of items){const x=PRODUCTS[id];k+=x.k*g/100;p+=x.p*g/100;c+=x.c*g/100;f+=x.f*g/100}return{k,p,c,f}}
+function macrosOf(items){let k=0,p=0,c=0,f=0;for(const[id,g]of items){const x=PX(id);k+=x.k*g/100;p+=x.p*g/100;c+=x.c*g/100;f+=x.f*g/100}return{k,p,c,f}}
 const scaleCache=new Map();
 function scaleRecipe(r,kT,pT,fT){
   const key=`${r.id}|${Math.round(kT)}|${Math.round(pT)}|${Math.round(fT)}`;
   if(scaleCache.has(key))return scaleCache.get(key);
   let sp=1,sc=1,sf=1;
-  const sum=(role,k)=>r.items.filter(i=>i[2]===role).reduce((a,i)=>a+PRODUCTS[i[0]][k]*i[1]/100,0);
+  const sum=(role,k)=>r.items.filter(i=>i[2]===role).reduce((a,i)=>a+PX(i[0])[k]*i[1]/100,0);
   const P1=sum("P","p"),C1=sum("C","k"),F1=sum("F","f");
   const scaleOf=role=>role==="P"?sp:role==="C"?sc:role==="F"?sf:1;
   for(let it=0;it<20;it++){
     let pO=0,fO=0,kNC=0;
-    for(const[id,g,role]of r.items){const x=PRODUCTS[id];const gg=g*scaleOf(role);
+    for(const[id,g,role]of r.items){const x=PX(id);const gg=g*scaleOf(role);
       if(role!=="P")pO+=x.p*gg/100; if(role!=="F")fO+=x.f*gg/100; if(role!=="C")kNC+=x.k*gg/100;}
     sp=P1>0?clamp((pT-pO)/P1,0.5,2.5):1;
     sf=F1>0?clamp((fT-fO)/F1,0.4,1.6):1;
@@ -480,7 +541,7 @@ function scaleRecipe(r,kT,pT,fT){
   scaleCache.set(key,out);return out;
 }
 function qtyLabel(id,g){
-  const x=PRODUCTS[id];
+  const x=PX(id);
   if(id==="huevos"){const n=Math.round(g/60);return `${n} ${n===1?"huevo":"huevos"}`}
   if(x.ml)return g>=1000?`${fmt1(g/1000)} l`:`${fmt0(g)} ml`;
   let s=g>=1000?`${fmt1(g/1000)} kg`:`${fmt0(g)} g`;
@@ -489,13 +550,7 @@ function qtyLabel(id,g){
 }
 
 /* ============ PLAN ============ */
-function recipesFor(slot){
-  const ex=state.profile.exclude||[],hid=state.hidden||[];
-  const all=RECIPES.filter(r=>r.slots.includes(slot));
-  let l=all.filter(r=>!hid.includes(r.id)&&!r.items.some(i=>ex.includes(i[0])));
-  if(!l.length)l=all.filter(r=>!r.items.some(i=>ex.includes(i[0])));
-  return l.length?l:all;
-}
+function recipesFor(slot){const ex=state.profile.exclude,all=allRecipes();const l=all.filter(r=>r.slots.includes(slot)&&!r.items.some(i=>ex.includes(i[0])));return l.length?l:all.filter(r=>r.slots.includes(slot))}
 function weekNum(ws){return Math.round((dObj(ws)-new Date(2024,0,1))/(7*864e5))}
 function blockOf(d){return d<=2?0:d<=4?1:2}
 function baseRecipe(ws,d,slot){
@@ -506,7 +561,7 @@ function baseRecipe(ws,d,slot){
 }
 function recipeAt(ws,d,slot){
   const sw=(state.swaps[ws]||{})[`${d}-${slot}`];
-  return (sw&&RECIPES.find(r=>r.id===sw))||baseRecipe(ws,d,slot);
+  return (sw&&allRecipes().find(r=>r.id===sw))||baseRecipe(ws,d,slot);
 }
 function mealAt(ws,d,slot){
   const c=calc(),si=SLOT_INFO[slot];
@@ -515,7 +570,8 @@ function mealAt(ws,d,slot){
 function dayMeals(ws,d){return SLOTS.map(s=>({slot:s,...mealAt(ws,d,s)}))}
 function schedule(d){
   const p=state.profile,wake=toMin(p.despertar),train=toMin(p.entreno),bed=toMin(p.dormir<p.despertar?"23:59":p.dormir);
-  const trains=p.gymDays.includes(d)||p.padelDays.includes(d);
+  const td=(p.trainingDays||[]).find(x=>x.d===d);
+  const trains=!!td;
   const t={};
   t.desayuno=r15(wake+20);
   t.comida=Math.max(t.desayuno+240,toMin("14:00"));
@@ -524,7 +580,7 @@ function schedule(d){
   if(trains&&train>t.comida)cena=Math.max(cena,train+105);
   t.cena=r15(Math.min(cena,bed-75));
   t.merienda=(trains&&train>t.comida+90&&train<t.cena)?r15(train-90):r15((t.comida+t.cena)/2);
-  return{t,trains,gym:p.gymDays.includes(d),padel:p.padelDays.includes(d),train,bed,wake};
+  return{t,trains,sport:td&&td.t,sportLabel:sportLabel(td),gym:td&&td.t==="gym",padel:td&&td.t==="padel",train,bed,wake};
 }
 
 /* ============ CHECK-IN ============ */
@@ -610,16 +666,18 @@ function submitCheckin(){
     const[lo,hi]=c0.range;
     const prevM=[...state.checkins].reverse().find(c=>c.meas&&c.meas.cintura);
     const waistUp=meas&&meas.cintura&&prevM?meas.cintura-prevM.meas.cintura:0;
+    const goal=c0.goal;
     if(gainW<lo){
       state.lowStreak=(state.lowStreak||0)+1;
-      if(state.lowStreak>=2){adj=150;state.lowStreak=0;note=`Dos semanas por debajo del ritmo objetivo: subimos 150 kcal, sobre todo en carbohidratos.`}
-      else note=`Esta semana has ganado menos de lo previsto. Si la próxima se repite, subiremos calorías. Revisa que estés completando todas las comidas.`;
+      const slow=goal==="deficit"?"Estás perdiendo más rápido de lo recomendable":goal==="mantenimiento"?"Has perdido peso de más":"Esta semana has ganado menos de lo previsto";
+      if(state.lowStreak>=2){adj=150;state.lowStreak=0;note=`Dos semanas ${goal==="deficit"?"perdiendo más rápido de lo recomendable":"por debajo del ritmo objetivo"}: subimos 150 kcal${goal!=="deficit"?", sobre todo en carbohidratos":""}.`}
+      else note=`${slow}. Si la próxima semana se repite, subiremos calorías. Revisa que estés completando todas las comidas.`;
     }else if(gainW>hi){
       state.lowStreak=0;
-      if(state.checkins.length===1){note="La primera semana es normal subir más rápido: comes más y tus músculos guardan más glucógeno y agua. Mantenemos el plan."}
-      else if(gainW>hi+0.2){adj=-150;note="Estás subiendo bastante más rápido de lo necesario, así que bajamos 150 kcal para ganar músculo con menos grasa."}
-      else if(waistUp>=1){adj=-100;note="Subes un poco rápido y la cintura ha crecido: bajamos 100 kcal."}
-      else note="Vas algo por encima del ritmo, pero la cintura se mantiene. Seguimos igual y vigilamos."
+      if(goal==="volumen"&&state.checkins.length===1){note="La primera semana es normal subir más rápido: comes más y tus músculos guardan más glucógeno y agua. Mantenemos el plan."}
+      else if(gainW>hi+0.2){adj=-150;note=goal==="deficit"?"Estás perdiendo menos de lo esperado, así que bajamos 150 kcal.":goal==="mantenimiento"?"Has ganado peso de más, así que bajamos 150 kcal.":"Estás subiendo bastante más rápido de lo necesario, así que bajamos 150 kcal para ganar músculo con menos grasa."}
+      else if(waistUp>=1&&goal!=="deficit"){adj=-100;note="La cintura ha crecido un poco: bajamos 100 kcal."}
+      else note=goal==="deficit"?"Vas algo más lento de lo esperado, pero dentro de lo razonable. Seguimos igual y vigilamos.":goal==="mantenimiento"?"Pequeña variación, dentro de lo normal. Mantenemos las calorías.":"Vas algo por encima del ritmo, pero la cintura se mantiene. Seguimos igual y vigilamos."
     }else{state.lowStreak=0;note="Ritmo perfecto. Mantenemos las calorías."}
   }
   state.kcalAdj+=adj;
@@ -645,10 +703,11 @@ const ICONS={
  plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 11h16a8 8 0 0 1-16 0Z"/><path d="M9 7c0-1.5 1-2 1-3.5M13 7c0-1.5 1-2 1-3.5"/></svg>',
  compra:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg>',
  progreso:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 2 5-6"/></svg>',
- entreno:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg>',
- ajustes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'
+ ajustes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+ cocina:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M6 21V10a6 6 0 0 1 12 0v11"/><path d="M4 10h16"/></svg>',
+ gym:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7v10M2 9v6M18 7v10M22 9v6M6 12h12"/></svg>'
 };
-const TABS=[["hoy","Hoy"],["plan","Plan"],["compra","Compra"],["entreno","Entreno"],["progreso","Progreso"],["ajustes","Perfil"]];
+const TABS=[["hoy","Hoy"],["plan","Plan"],["cocina","Cocina"],["compra","Compra"],["gym","Gym"],["progreso","Progreso"],["ajustes","Perfil"]];
 
 function render(){
   const app=$("#app"),nav=$("#tabs");
@@ -656,14 +715,19 @@ function render(){
   if(!booted){return}
   if(!session){nav.hidden=true;app.innerHTML=renderLogin();return}
   if(!state){nav.hidden=true;app.innerHTML=renderOnboarding();return}
-  fixState();
   nav.hidden=false;
+  document.body.dataset.goal=state.profile.goal||"volumen";
   const due=checkinDue();
   nav.innerHTML=`<div class="in">${TABS.map(([k,l])=>`<button data-tab="${k}" ${ui.tab===k&&!ui.view?'aria-current="page"':""}>${ICONS[k]}<span>${l}${k==="progreso"&&due?'<span class="badge" aria-label="check-in pendiente"></span>':""}</span></button>`).join("")}</div>`;
   let html="";
   if(ui.view==="checkin")html=renderCheckin();
   else if(ui.view==="result")html=renderResult();
-  else html={hoy:renderHoy,plan:renderPlan,compra:renderCompra,entreno:renderEntreno,progreso:renderProgreso,ajustes:renderAjustes}[ui.tab]();
+  else if(ui.view==="recetaEdit")html=renderRecetaEdit();
+  else if(ui.view==="ingredienteEdit")html=renderIngredienteEdit();
+  else if(ui.view==="rutinaEdit")html=renderRutinaEdit();
+  else if(ui.view==="entrenoHoy")html=renderEntrenoHoy();
+  else if(ui.view==="fotoDespensa")html=renderFotoDespensa();
+  else html={hoy:renderHoy,plan:renderPlan,cocina:renderCocina,compra:renderCompra,gym:renderGym,progreso:renderProgreso,ajustes:renderAjustes}[ui.tab]();
   app.innerHTML=html;
   bindAfter();
 }
@@ -681,7 +745,7 @@ function macroBars(k,p,c,f,tk,tp,tc,tf){
   return `<div class="macros">${bar("k","Calorías",k,tk,"kcal")}${bar("p","Proteína",p,tp,"g")}${bar("c","Carbohidratos",c,tc,"g")}${bar("g","Grasa",f,tf,"g")}</div>`;
 }
 function ingList(meal){
-  return `<ul class="ing">${meal.items.map(([id,g])=>`<li><span>${esc(PRODUCTS[id].n)}</span><span class="q">${qtyLabel(id,g)}</span></li>`).join("")}</ul>`;
+  return `<ul class="ing">${meal.items.map(([id,g])=>`<li><span>${esc(PX(id).n)}</span><span class="q">${qtyLabel(id,g)}</span></li>`).join("")}</ul>`;
 }
 function mealMacroLine(m){return `${fmt0(m.k)} kcal · <span class="dotp">${fmt0(m.p)} g prot</span> · <span class="dotc">${fmt0(m.c)} g carb</span> · <span class="dotg">${fmt0(m.f)} g grasa</span>`}
 
@@ -690,8 +754,8 @@ function renderHoy(){
   const due=checkinDue();
   const lastW=[...state.weights].sort((a,b)=>a.d<b.d?-1:1).pop();
   const todayW=state.weights.find(w=>w.d===td);
-  let sub=`${DAYS[d]} ${niceDate(td)}. `+(sch.gym?`Día de gimnasio a las ${p.entreno}.`:sch.padel?`Día de pádel a las ${p.entreno}.`:"Día de descanso.");
-  let h=header("Hoy",sub);
+  let sub=`${DAYS[d]} ${niceDate(td)}. `+(sch.trains?`${sch.sportLabel} a las ${p.entreno}.`:"Día de descanso.");
+  let h=header(`Hoy <span class="tag" style="background:var(--soft);color:var(--accent);vertical-align:middle;font-size:13px">${esc((GOALS.find(([k])=>k===(p.goal||"volumen"))||[,""])[1])}</span>`,sub);
   if(due)h+=dueBanner();
   else if(d===6)h+=`<section class="panel"><b>Mañana es lunes de check-in.</b> Pésate en ayunas al levantarte y ten el móvil listo para las 3 fotos.</section>`;
   h+=`<section class="panel"><div class="row between"><h3>Peso de esta mañana</h3>${lastW?`<span class="small muted">Último: ${fmt1(lastW.kg)} kg (${niceDate(lastW.d)})</span>`:""}</div>
@@ -709,15 +773,15 @@ function renderHoy(){
     let lab=SLOT_INFO[m.slot].l;
     if(m.slot==="merienda"&&sch.trains&&t<sch.train)lab="Merienda pre-entreno";
     ev.push({t,kind:"meal"+(ck?" done":""),html:`<div class="card"><label class="check"><input type="checkbox" data-meal="${m.slot}" ${ck?"checked":""}><span><span class="small muted">${lab}</span><br><b>${esc(m.r.n)}</b><div class="mm">${mealMacroLine(m.m)}</div></span></label>
-      <details><summary>Ver cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>${dislikeChips(m)}</details><div class="mt8"><button class="btn sm ghost" data-swap="${d}-${m.slot}">Cambiar esta comida</button></div></div>`});
+      <details><summary>Ver cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></details></div>`});
     if(m.slot==="desayuno"){
       const ckc=!!log.crea;
       ev.push({t:t+1,kind:"minor"+(ckc?" done":""),html:`<label class="check"><input type="checkbox" data-act="crea" ${ckc?"checked":""}><span><b>Creatina, 5 g</b><div class="mm">Con el desayuno, en agua o en la leche. Todos los días, también los de descanso.</div></span></label>`});
     }
   }
   if(sch.trains){
-    ev.push({t:sch.train,kind:"train",html:sch.gym?(()=>{const rt=routineFor(d);return `<div class="card"><b>Gimnasio${rt?" · "+esc(rt.name):""}</b><div class="mm">${trainedOn(td)?"Ya has apuntado el entreno de hoy ✓":"Abre la rutina, apunta tus pesos y sube un poco cada semana: así creces."}</div><button class="btn sm primary mt8" data-tab="entreno">Ver rutina de hoy</button></div>`})():`<div class="card"><b>Pádel</b><div class="mm">Cuenta como actividad extra: ya está sumada en tus calorías.</div></div>`});
-    if(sch.gym&&p.cafeina){
+    ev.push({t:sch.train,kind:"train",html:workoutCard(td,sch)});
+    if(sch.trains&&p.cafeina){
       const late=sch.bed-(sch.train-30)<8*60;
       ev.push({t:sch.train-30,kind:"minor",html:`<b>Cafeína (opcional)</b><div class="mm">${late?"Con tu hora de dormir, mejor un café pequeño (≤100 mg) o nada: dormir bien te hará crecer más que la cafeína.":"Un café 30 minutos antes de entrenar."}</div>`});
     }
@@ -736,11 +800,11 @@ function renderPlan(){
   h+=`<div class="days" role="group" aria-label="Día">${DAYS_S.map((s,i)=>`<button data-day="${i}" aria-pressed="${i===d}" class="${i===td?"today":""}">${s}<small>${dObj(addDays(ws,i)).getDate()}</small></button>`).join("")}</div>`;
   const meals=dayMeals(ws,d),sch=schedule(d);
   const tot=meals.reduce((a,m)=>({k:a.k+m.m.k,p:a.p+m.m.p,c:a.c+m.m.c,f:a.f+m.m.f}),{k:0,p:0,c:0,f:0});
-  h+=`<section class="panel"><div class="row between"><h3>${DAYS[d]}</h3><span class="small muted">${sch.gym?"Gimnasio":sch.padel?"Pádel":"Descanso"}</span></div><div class="mt8">${macroBars(tot.k,tot.p,tot.c,tot.f,c.kcal,c.P,c.C,c.F)}</div><p class="hint">Lo que manda son las calorías. La proteína suele pasarse un poco (es un mínimo, no un techo) y a cambio los carbohidratos quedan algo por debajo: está bien así.</p></section>`;
+  h+=`<section class="panel"><div class="row between"><h3>${DAYS[d]}</h3><span class="small muted">${sch.trains?esc(sch.sportLabel):"Descanso"}</span></div><div class="mt8">${macroBars(tot.k,tot.p,tot.c,tot.f,c.kcal,c.P,c.C,c.F)}</div><p class="hint">Lo que manda son las calorías. La proteína suele pasarse un poco (es un mínimo, no un techo) y a cambio los carbohidratos quedan algo por debajo: está bien así.</p></section>`;
   for(const m of meals){
     h+=`<article class="mealcard"><div class="head"><div><div class="slot">${hhmm(sch.t[m.slot])} · ${SLOT_INFO[m.slot].l}${m.r.batch?'<span class="tag">batch</span>':""}${m.r.portable?'<span class="tag">táper</span>':""}</div><h3 class="mt8" style="font-stretch:105%">${esc(m.r.n)}</h3><div class="mm">${mealMacroLine(m.m)} · ${m.r.min} min</div></div>
      <button class="btn sm ghost" data-swap="${d}-${m.slot}" aria-label="Cambiar ${esc(m.r.n)} por otra receta">Cambiar</button></div>
-     <details><summary>Cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>${dislikeChips(m)}</details></article>`;
+     <details><summary>Cantidades y pasos</summary>${ingList(m)}<ol class="steps">${m.r.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></details></article>`;
   }
   const blocks=[["Domingo","lunes a miércoles",[0,1,2]],["Miércoles noche","jueves y viernes",[3,4]],["Viernes noche","el fin de semana",[5,6]]];
   h+=`<section class="panel"><h3>Batch cooking</h3><p class="small muted">Comidas y cenas se repiten en bloques para que cocines una vez y comas varios días. En nevera, máximo 3 días.</p>`;
@@ -752,30 +816,316 @@ function renderPlan(){
   return h;
 }
 
+/* ============ COCINA: recetas, ingredientes y despensa ============ */
+function uid8(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function recipeCoverage(r){
+  const need={};for(const[id,g]of r.items)need[id]=(need[id]||0)+g;
+  const ids=Object.keys(need);if(!ids.length)return 0;
+  const covered=ids.filter(id=>((state.pantry[id]&&state.pantry[id].qty)||0)>=need[id]*0.6).length;
+  return covered/ids.length;
+}
+function renderCocina(){
+  const sub=ui.cocinaTab;
+  let h=header("Cocina","Tus recetas, ingredientes y despensa");
+  h+=`<div class="seg" role="group" aria-label="Sección"><button data-cocinatab="recetas" aria-pressed="${sub==="recetas"}">Recetas</button><button data-cocinatab="ingredientes" aria-pressed="${sub==="ingredientes"}">Ingredientes</button><button data-cocinatab="despensa" aria-pressed="${sub==="despensa"}">Despensa</button></div>`;
+  if(sub==="ingredientes")h+=renderIngredientesTab();
+  else if(sub==="despensa")h+=renderDespensaTab();
+  else h+=renderRecetasTab();
+  return h;
+}
+function renderRecetasTab(){
+  const rs=[...allRecipes()].sort((a,b)=>recipeCoverage(b)-recipeCoverage(a));
+  let h=`<button class="btn primary block mt16" data-act="newReceta">Nueva receta</button>`;
+  h+=`<section class="shop mt8">`;
+  for(const r of rs){
+    const cov=recipeCoverage(r),m=macrosOf(r.items);
+    h+=`<div class="mealcard"><div class="head"><div><h3 style="font-stretch:105%">${esc(r.n)}${cov>=0.99?'<span class="tag" style="background:var(--fat);color:#fff">tienes todo</span>':""}</h3><div class="mm">${r.slots.map(s=>SLOT_INFO[s].l).join(", ")} · ${fmt0(m.k)} kcal/100%${r.min?` · ${r.min} min`:""}</div></div>
+     <div class="row"><button class="btn sm ghost" data-editreceta="${r.id}">Editar</button></div></div></div>`;
+  }
+  h+=`</section>`;
+  return h;
+}
+function renderIngredientesTab(){
+  const ap=allProducts();
+  let h=`<button class="btn primary block mt16" data-act="newIngrediente">Nuevo ingrediente</button><section class="shop mt8">`;
+  for(const sec of SECTIONS){
+    const ids=Object.keys(ap).filter(id=>ap[id].sec===sec);if(!ids.length)continue;
+    h+=`<h3>${sec}</h3>`;
+    for(const id of ids.sort((a,b)=>ap[a].n.localeCompare(ap[b].n))){
+      const x=ap[id],custom=!!state.products[id];
+      h+=`<label><span class="nm">${esc(x.n)}${custom?'<span class="tag">tuyo</span>':""}<span class="mm" style="display:block">${fmt0(x.k)} kcal · P${fmt1(x.p)} C${fmt1(x.c)} G${fmt1(x.f)} /100g</span></span><span class="qty"><button class="btn sm ghost" data-editingrediente="${id}">Editar</button></span></label>`;
+    }
+  }
+  h+=`</section>`;
+  return h;
+}
+const ROLES=[["P","Proteína (se ajusta)"],["C","Carbohidrato (se ajusta)"],["F","Grasa (se ajusta)"],["V","Fijo (no se ajusta)"]];
+function rcRow(id,g,role){
+  const ap=allProducts();
+  return `<div class="row rcrow" style="align-items:center">
+   <select class="inp" data-rcing style="flex:2">${Object.keys(ap).sort((a,b)=>ap[a].n.localeCompare(ap[b].n)).map(pid=>`<option value="${pid}" ${pid===id?"selected":""}>${esc(ap[pid].n)}</option>`).join("")}</select>
+   <input class="inp" data-rcgrams inputmode="numeric" value="${g||100}" style="flex:1;max-width:70px" aria-label="Gramos">
+   <select class="inp" data-rcrole style="flex:1;max-width:110px">${ROLES.map(([k,l])=>`<option value="${k}" ${k===role?"selected":""}>${k}</option>`).join("")}</select>
+   <button type="button" class="btn sm ghost" data-rcremove aria-label="Quitar ingrediente">✕</button></div>`;
+}
+function renderRecetaEdit(){
+  const d=ui.editRecipe,isNew=!allRecipes().some(r=>r.id===d.id);
+  let h=`<header class="top"><div><h1>${isNew?"Nueva receta":"Editar receta"}</h1></div><button class="btn sm ghost" data-act="closeView">Cerrar</button></header>`;
+  h+=`<section class="panel"><div class="field"><label class="f" for="rcName">Nombre</label><input class="inp" id="rcName" value="${esc(d.n)}"></div>
+   <div class="field"><label class="f">Cuándo se come</label><div class="chips">${SLOTS.map(s=>`<button type="button" class="chip" data-rcslot="${s}" aria-pressed="${d.slots.includes(s)}">${SLOT_INFO[s].l}</button>`).join("")}</div></div>
+   <div class="grid2"><div class="field"><label class="f" for="rcMin">Minutos</label><input class="inp" id="rcMin" inputmode="numeric" value="${d.min||15}"></div>
+   <div class="field"><label class="f">Opciones</label><label class="check"><input type="checkbox" id="rcBatch" ${d.batch?"checked":""}><span>Batch cooking</span></label><label class="check mt8"><input type="checkbox" id="rcPortable" ${d.portable?"checked":""}><span>Se puede llevar (táper)</span></label></div></div></section>`;
+  h+=`<section class="panel"><h3>Ingredientes</h3><p class="hint">Las cantidades son para una ración normal; la app las reescala luego para llegar a tus calorías y macros. "P/C/F" se ajustan solos; "Fijo" se queda igual (verduras, especias...).</p>
+   <div id="rcItems" class="mt8">${d.items.map(([id,g,role])=>rcRow(id,g,role)).join("")}</div>
+   <button type="button" class="btn ghost sm mt8" data-act="rcAddRow">+ Añadir ingrediente</button></section>`;
+  h+=`<section class="panel"><h3>Pasos</h3><p class="hint">Uno por línea.</p><textarea class="inp" id="rcSteps" rows="5" style="min-height:120px">${esc(d.steps.join("\n"))}</textarea></section>`;
+  h+=`<div class="grid2"><button class="btn primary" data-act="saveReceta">Guardar receta</button>${isNew?"":'<button class="btn ghost" data-act="deleteReceta" style="color:var(--warn);border-color:var(--warn)">Eliminar</button>'}</div>`;
+  return h;
+}
+function readRecipeDraftFromDOM(){
+  const d=ui.editRecipe;
+  d.n=$("#rcName").value.trim()||"Receta sin nombre";
+  d.min=Math.max(1,Math.round(parseFloat($("#rcMin").value)||10));
+  d.batch=$("#rcBatch").checked;d.portable=$("#rcPortable").checked;
+  d.slots=[...document.querySelectorAll('[data-rcslot][aria-pressed="true"]')].map(b=>b.dataset.rcslot);
+  d.items=[...document.querySelectorAll(".rcrow")].map(row=>[
+    row.querySelector("[data-rcing]").value,
+    Math.max(1,Math.round(parseFloat(row.querySelector("[data-rcgrams]").value)||0)),
+    row.querySelector("[data-rcrole]").value
+  ]);
+  d.steps=$("#rcSteps").value.split("\n").map(s=>s.trim()).filter(Boolean);
+}
+function renderIngredienteEdit(){
+  const d=ui.editIngredient;
+  let h=`<header class="top"><div><h1>${d.isNew?"Nuevo ingrediente":"Editar ingrediente"}</h1></div><button class="btn sm ghost" data-act="closeView">Cerrar</button></header>`;
+  if(!d.isNew&&!state.products[d.id])h+=`<section class="panel"><p class="small muted">Es un ingrediente base de la app. Si guardas cambios, se aplicarán en todas tus recetas que lo usan. "Eliminar" borra tu versión y vuelve a los valores originales.</p></section>`;
+  h+=`<section class="panel">
+   <div class="field"><label class="f" for="inName">Nombre</label><input class="inp" id="inName" value="${esc(d.n)}"></div>
+   <div class="field"><label class="f" for="inSec">Sección (para la lista de la compra)</label><select class="inp" id="inSec">${SECTIONS.map(s=>`<option value="${s}" ${s===d.sec?"selected":""}>${s}</option>`).join("")}</select></div>
+   <div class="grid2"><div class="field"><label class="f" for="inK">Kcal /100g</label><input class="inp" id="inK" inputmode="decimal" value="${d.k}"></div>
+   <div class="field"><label class="f" for="inP">Proteína /100g</label><input class="inp" id="inP" inputmode="decimal" value="${d.p}"></div></div>
+   <div class="grid2"><div class="field"><label class="f" for="inC">Carbohidratos /100g</label><input class="inp" id="inC" inputmode="decimal" value="${d.c}"></div>
+   <div class="field"><label class="f" for="inF">Grasa /100g</label><input class="inp" id="inF" inputmode="decimal" value="${d.f}"></div></div>
+   <div class="field"><label class="f" for="inEur">Precio orientativo (€/kg)</label><input class="inp" id="inEur" inputmode="decimal" value="${d.eur||0}"></div>
+  </section>`;
+  h+=`<div class="grid2"><button class="btn primary" data-act="saveIngrediente">Guardar</button>${(!d.isNew&&state.products[d.id])?'<button class="btn ghost" data-act="deleteIngrediente" style="color:var(--warn);border-color:var(--warn)">Eliminar</button>':""}</div>`;
+  return h;
+}
+function renderDespensaTab(){
+  const ap=allProducts(),ids=Object.keys(state.pantry).filter(id=>state.pantry[id].qty>0);
+  let h=`<section class="panel"><p class="small muted">Lo que tienes guardado en casa. La lista de la compra descuenta estas cantidades.</p>
+   <button class="btn primary block mt8" data-act="fotoDespensa">📷 Detectar ingredientes por foto</button>
+   ${!state.apiKeys.anthropic?'<p class="hint">Pega tu clave de Anthropic en Perfil para poder usar esta función.</p>':""}</section>`;
+  h+=`<section class="panel"><h3>Añadir a mano</h3><div class="row mt8">
+   <select class="inp" id="pantryAdd" style="flex:2">${Object.keys(ap).sort((a,b)=>ap[a].n.localeCompare(ap[b].n)).map(id=>`<option value="${id}">${esc(ap[id].n)}</option>`).join("")}</select>
+   <input class="inp" id="pantryQty" inputmode="numeric" placeholder="g/ml" style="flex:1;max-width:90px">
+   <button class="btn" data-act="pantryAddBtn">Añadir</button></div></section>`;
+  if(!ids.length)h+=`<section class="panel center"><p class="muted">Tu despensa está vacía.</p></section>`;
+  else{
+    h+=`<section class="shop">`;
+    for(const id of ids.sort((a,b)=>ap[a].n.localeCompare(ap[b].n))){
+      const x=ap[id],qty=state.pantry[id].qty;
+      h+=`<label><span class="nm">${esc(x.n)}</span><span class="qty">${qtyLabel(id,qty)}</span><span class="row" style="gap:4px"><button class="btn sm ghost" data-pantrydec="${id}" aria-label="Quitar">−</button><button class="btn sm ghost" data-pantryinc="${id}" aria-label="Añadir">+</button></span></label>`;
+    }
+    h+=`</section>`;
+  }
+  return h;
+}
+/* ============ GYM ============ */
+function routineForDay(d){return(state.routines||[]).find(r=>(r.days||[]).includes(d))}
+function startWorkoutLog(date,sch){
+  const routine=routineForDay(dayIdx(date));
+  return{type:sch.sport||"gym",routineId:routine?routine.id:null,completed:false,durationMin:null,notes:"",
+    exercises:routine?routine.exercises.map(e=>({exerciseId:e.exerciseId,sets:e.sets.map(s=>({reps:s.reps,weight:s.weight,done:false}))})):[]};
+}
+function workoutCard(date,sch){
+  const log=state.workoutLog[date];
+  return `<div class="card"><div class="row between"><b>${esc(sch.sportLabel)}</b>${log&&log.completed?'<span class="tag" style="background:var(--fat);color:#fff">hecho</span>':""}</div>
+  <div class="mm">${sch.gym?"Registra tus series, repeticiones y peso.":"Apunta cuánto has hecho hoy."}</div>
+  <button type="button" class="btn ${log?"ghost":"primary"} sm mt8" data-act="openEntreno">${log?"Ver / editar entreno":"Empezar entreno"}</button></div>`;
+}
+function renderEntrenoHoy(){
+  const date=today(),d=dayIdx(date),sch=schedule(d),log=state.workoutLog[date];
+  let h=`<header class="top"><div><h1>${esc(sch.sportLabel)}</h1><div class="sub">${niceDate(date)}</div></div><button class="btn sm ghost" data-act="closeView">Cerrar</button></header>`;
+  if(sch.gym){
+    h+=`<section class="panel"><div class="field"><label class="f">Añadir ejercicio</label><div class="row"><select class="inp" id="enAddEx" style="flex:2">${Object.values(allExercises()).sort((a,b)=>a.n.localeCompare(b.n)).map(e=>`<option value="${e.id}">${esc(e.n)}</option>`).join("")}</select><button type="button" class="btn" data-act="addExercise">Añadir</button></div></div></section>`;
+    log.exercises.forEach((ex,i)=>{
+      const info=EX(ex.exerciseId);
+      h+=`<section class="panel exblock" data-exidx="${i}"><div class="row between"><h3 style="font-stretch:105%">${esc(info.n)}</h3><button type="button" class="btn sm ghost" data-act="removeEx" data-exidx="${i}">Quitar</button></div>
+       <div class="mm">${esc(info.grupo||"")}${info.equipo?` · ${esc(info.equipo)}`:""}</div>
+       <div class="setrows mt8">${ex.sets.map((s,j)=>`<div class="row setrow" data-setidx="${j}" style="align-items:center"><span class="small muted" style="min-width:52px">Serie ${j+1}</span><input class="inp" data-setreps inputmode="numeric" value="${s.reps}" placeholder="reps" style="max-width:64px"><span class="small muted">×</span><input class="inp" data-setweight inputmode="decimal" value="${s.weight}" placeholder="kg" style="max-width:74px"><span class="small muted">kg</span><label class="check" style="margin-left:auto"><input type="checkbox" data-setdone ${s.done?"checked":""}></label><button type="button" class="btn sm ghost" data-act="removeSet" data-exidx="${i}" data-setidx="${j}" aria-label="Quitar serie">✕</button></div>`).join("")}</div>
+       <button type="button" class="btn ghost sm mt8" data-act="addSet" data-exidx="${i}">+ Serie</button></section>`;
+    });
+    if(!log.exercises.length)h+=`<section class="panel center"><p class="muted">Añade ejercicios con el buscador de arriba.</p></section>`;
+  }
+  h+=`<section class="panel"><div class="grid2"><div class="field"><label class="f" for="enDur">Duración (min)</label><input class="inp" id="enDur" inputmode="numeric" value="${log.durationMin||""}"></div>
+   <div class="field"><label class="f">Estado</label><label class="check" style="margin-top:10px"><input type="checkbox" id="enDone" ${log.completed?"checked":""}><span>Entreno completado</span></label></div></div>
+   <div class="field"><label class="f" for="enNotes">Notas</label><textarea class="inp" id="enNotes" rows="2">${esc(log.notes||"")}</textarea></div>
+   <button type="button" class="btn primary block" data-act="saveEntreno">Guardar entreno</button></section>`;
+  return h;
+}
+function readEntrenoDraftFromDOM(){
+  const log=state.workoutLog[today()];if(!log)return;
+  document.querySelectorAll(".exblock").forEach(blk=>{
+    const i=+blk.dataset.exidx,ex=log.exercises[i];if(!ex)return;
+    ex.sets=[...blk.querySelectorAll(".setrow")].map(row=>({
+      reps:Math.max(0,Math.round(parseFloat(row.querySelector("[data-setreps]").value)||0)),
+      weight:Math.max(0,parseFloat(String(row.querySelector("[data-setweight]").value).replace(",","."))||0),
+      done:row.querySelector("[data-setdone]").checked
+    }));
+  });
+  const dur=$("#enDur");if(dur)log.durationMin=Math.round(parseFloat(dur.value)||0)||null;
+  const notes=$("#enNotes");if(notes)log.notes=notes.value;
+  const cp=$("#enDone");if(cp)log.completed=cp.checked;
+}
+function renderGym(){
+  const sub=ui.gymTab;
+  let h=header("Gym","Tus rutinas y tu historial de entrenos");
+  h+=`<div class="seg" role="group" aria-label="Sección"><button data-gymtab="rutinas" aria-pressed="${sub==="rutinas"}">Rutinas</button><button data-gymtab="historial" aria-pressed="${sub==="historial"}">Historial</button></div>`;
+  h+=sub==="historial"?renderHistorialTab():renderRutinasTab();
+  return h;
+}
+function renderRutinasTab(){
+  const rs=state.routines||[];
+  let h=`<button class="btn primary block mt16" data-act="newRutina">Nueva rutina</button><section class="shop mt8">`;
+  if(!rs.length)h+=`<p class="muted center mt16">Aún no tienes rutinas. Crea una y asígnale los días de la semana.</p>`;
+  for(const r of rs){
+    h+=`<div class="mealcard"><div class="head"><div><h3 style="font-stretch:105%">${esc(r.n)}</h3><div class="mm">${(r.days||[]).map(d=>DAYS_S[d]).join(" ")||"sin días asignados"} · ${r.exercises.length} ejercicios</div></div>
+     <button class="btn sm ghost" data-editrutina="${r.id}">Editar</button></div></div>`;
+  }
+  h+=`</section>`;
+  return h;
+}
+function renderHistorialTab(){
+  const entries=Object.entries(state.workoutLog||{}).sort((a,b)=>b[0]<a[0]?-1:1);
+  if(!entries.length)return `<section class="panel center mt16"><p class="muted">Todavía no has registrado ningún entreno.</p></section>`;
+  let h=`<section class="mt16">`;
+  for(const[date,log]of entries){
+    const vol=log.exercises?log.exercises.reduce((a,ex)=>a+ex.sets.reduce((b,s)=>b+(s.done?s.reps*s.weight:0),0),0):0;
+    h+=`<div class="hist"><div class="row between"><b>${niceDate(date)} · ${esc(sportLabel({t:log.type}))}</b>${log.completed?'<span class="tag" style="background:var(--fat);color:#fff">hecho</span>':""}</div>
+     <p class="small muted">${log.exercises&&log.exercises.length?`${log.exercises.length} ejercicios · ${fmt0(vol)} kg movidos`:""}${log.durationMin?` · ${log.durationMin} min`:""}${log.notes?` · ${esc(log.notes)}`:""}</p></div>`;
+  }
+  h+=`</section>`;
+  return h;
+}
+function rtSetRow(reps,weight){
+  return `<div class="row rtset" style="align-items:center"><input class="inp" data-rtreps inputmode="numeric" value="${reps}" placeholder="reps" style="max-width:70px"><span class="small muted">×</span><input class="inp" data-rtweight inputmode="decimal" value="${weight}" placeholder="kg" style="max-width:80px"><button type="button" class="btn sm ghost" data-rtremoveset aria-label="Quitar serie">✕</button></div>`;
+}
+function rtExRow(exerciseId,sets){
+  const ap=allExercises();
+  return `<div class="panel rtexblock" style="margin:10px 0"><div class="row between"><select class="inp" data-rtex style="flex:1">${Object.values(ap).sort((a,b)=>a.n.localeCompare(b.n)).map(e=>`<option value="${e.id}" ${e.id===exerciseId?"selected":""}>${esc(e.n)}</option>`).join("")}</select><button type="button" class="btn sm ghost" data-rtremoveex aria-label="Quitar ejercicio">✕</button></div>
+   <div class="rtsets mt8">${sets.map(([r,w])=>rtSetRow(r,w)).join("")}</div>
+   <button type="button" class="btn ghost sm mt8" data-act="rtAddSet">+ Serie</button></div>`;
+}
+function renderRutinaEdit(){
+  const d=ui.editRutina,isNew=!(state.routines||[]).some(r=>r.id===d.id);
+  let h=`<header class="top"><div><h1>${isNew?"Nueva rutina":"Editar rutina"}</h1></div><button class="btn sm ghost" data-act="closeView">Cerrar</button></header>`;
+  h+=`<section class="panel"><div class="field"><label class="f" for="rtName">Nombre</label><input class="inp" id="rtName" value="${esc(d.n)}" placeholder="Ej. Empuje, Piernas, Full body..."></div>
+   <div class="field"><label class="f">Días de la semana</label><div class="chips">${DAYS_S.map((s,i)=>`<button type="button" class="chip" data-rtday="${i}" aria-pressed="${(d.days||[]).includes(i)}">${s}</button>`).join("")}</div></div></section>`;
+  h+=`<div id="rtExercises">${d.exercises.map(e=>rtExRow(e.exerciseId,e.sets.map(s=>[s.reps,s.weight]))).join("")}</div>`;
+  h+=`<button type="button" class="btn ghost block" data-act="rtAddExercise">+ Añadir ejercicio</button>`;
+  h+=`<div class="grid2 mt16"><button class="btn primary" data-act="saveRutina">Guardar rutina</button>${isNew?"":'<button class="btn ghost" data-act="deleteRutina" style="color:var(--warn);border-color:var(--warn)">Eliminar</button>'}</div>`;
+  return h;
+}
+function readRutinaDraftFromDOM(){
+  const d=ui.editRutina;
+  d.n=$("#rtName").value.trim()||"Rutina sin nombre";
+  d.days=[...document.querySelectorAll('[data-rtday][aria-pressed="true"]')].map(b=>+b.dataset.rtday);
+  d.exercises=[...document.querySelectorAll(".rtexblock")].map(blk=>({
+    exerciseId:blk.querySelector("[data-rtex]").value,
+    sets:[...blk.querySelectorAll(".rtset")].map(row=>({
+      reps:Math.max(0,Math.round(parseFloat(row.querySelector("[data-rtreps]").value)||0)),
+      weight:Math.max(0,parseFloat(String(row.querySelector("[data-rtweight]").value).replace(",","."))||0)
+    }))
+  }));
+}
+/* ============ DETECCIÓN DE INGREDIENTES POR FOTO (Anthropic) ============ */
+function blobToBase64(blob){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(String(r.result).split(",")[1]);
+    r.onerror=rej;r.readAsDataURL(blob);
+  });
+}
+async function detectIngredients(file){
+  const key=state.apiKeys.anthropic;
+  if(!key){toast("Pega tu clave de Anthropic en Perfil");return}
+  ui.detect={status:"loading"};render();
+  try{
+    const{blob}=await compressImage(file);
+    const b64=await blobToBase64(blob);
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      body:JSON.stringify({model:"claude-haiku-4-5",max_tokens:1024,messages:[{role:"user",content:[
+        {type:"image",source:{type:"base64",media_type:"image/jpeg",data:b64}},
+        {type:"text",text:'Mira esta foto de una nevera, despensa o alimentos. Devuelve SOLO un JSON (sin texto extra, sin markdown, sin explicación) con esta forma exacta: {"items":[{"nombre":"...","cantidad_g":100}]}. "cantidad_g" es tu mejor estimación en gramos o mililitros. Incluye solo comida que veas con claridad, usando nombres genéricos en español (ej. "pechuga de pollo", "tomate", "leche").'}
+      ]}]})
+    });
+    if(!res.ok)throw new Error(`${res.status} ${(await res.text()).slice(0,200)}`);
+    const j=await res.json();
+    const txt=(j.content||[]).map(c=>c.text||"").join("");
+    const m=txt.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error("Respuesta sin JSON reconocible");
+    const parsed=JSON.parse(m[0]);
+    const ap=allProducts(),ids=Object.keys(ap);
+    const items=(parsed.items||[]).map(it=>{
+      const nom=String(it.nombre||"").trim();
+      const low=nom.toLowerCase();
+      const match=ids.find(id=>ap[id].n.toLowerCase()===low)||ids.find(id=>ap[id].n.toLowerCase().includes(low)||low.includes(ap[id].n.toLowerCase()));
+      return{nombre:nom,qty:Math.max(1,Math.round(it.cantidad_g||100)),matchId:match||null,include:true};
+    }).filter(it=>it.nombre);
+    ui.detect={status:items.length?"done":"empty",items};
+  }catch(e){ui.detect={status:"error",error:String((e&&e.message)||e)}}
+  render();
+}
+function renderFotoDespensa(){
+  let h=`<header class="top"><div><h1>Detectar ingredientes</h1></div><button class="btn sm ghost" data-act="closeView">Cerrar</button></header>`;
+  if(!state.apiKeys.anthropic)return h+`<section class="panel"><p class="muted">Pega tu clave de Anthropic en Perfil → Claves de API para usar esta función.</p></section>`;
+  const st=ui.detect||{status:"idle"};
+  const picker=`<label class="btn primary block mt8" style="text-align:center;cursor:pointer">Hacer foto o elegir imagen<input type="file" accept="image/*" capture="environment" id="detectInput" style="display:none"></label>`;
+  if(st.status==="idle")h+=`<section class="panel"><p class="small muted">Haz una foto a tu nevera o despensa: la IA intentará reconocer los ingredientes. Revisa siempre el resultado antes de guardarlo.</p>${picker}</section>`;
+  else if(st.status==="loading")h+=`<section class="panel center"><p class="muted">Analizando la foto…</p></section>`;
+  else if(st.status==="empty")h+=`<section class="panel"><p class="muted">No hemos reconocido ingredientes claros en la foto.</p>${picker}</section>`;
+  else if(st.status==="error")h+=`<section class="panel"><p style="color:var(--warn)">No se pudo analizar la foto: ${esc(st.error)}</p>${picker}</section>`;
+  else if(st.status==="done"){
+    h+=`<section class="panel"><h3>Esto hemos visto</h3><p class="hint">Desmarca lo que no sea correcto y ajusta las cantidades antes de guardarlas. Lo marcado "nuevo" se creará como ingrediente propio (puedes completarle los macros después en Cocina → Ingredientes).</p>
+     <div class="mt8">${st.items.map((it,i)=>`<div class="row" style="align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)"><input type="checkbox" data-detchk="${i}" ${it.include?"checked":""}><span style="flex:1">${esc(it.nombre)}${it.matchId?"":' <span class="tag">nuevo</span>'}</span><input class="inp" data-detqty="${i}" value="${it.qty}" inputmode="numeric" style="max-width:70px"></div>`).join("")}</div>
+     <button class="btn primary block mt16" data-act="confirmDetect">Añadir a la despensa</button></section>`;
+  }
+  return h;
+}
 function shoppingList(ws){
+  const need={};
+  for(let d=0;d<7;d++)for(const m of dayMeals(ws,d))for(const[id,g]of m.items)need[id]=(need[id]||0)+g;
   const agg={};
-  for(let d=0;d<7;d++)for(const m of dayMeals(ws,d))for(const[id,g]of m.items)agg[id]=(agg[id]||0)+g;
+  for(const[id,g]of Object.entries(need)){
+    const have=(state.pantry[id]&&state.pantry[id].qty)||0;
+    const left=Math.max(0,g-have);
+    if(left>0)agg[id]=left;
+  }
   return agg;
 }
 function renderCompra(){
-  const ws=weekStartNow(),p=state.profile;
+  const ws=weekStartNow(),p=state.profile,ap=allProducts();
   let h=header("Lista de la compra",`Para la semana del ${niceDate(ws)}`);
   if(checkinDue())return h+`<section class="panel lock"><div class="big" aria-hidden="true">🔒</div><h2 class="mt8">Lista bloqueada</h2><p class="muted">Primero el check-in: las cantidades dependen de tus calorías de esta semana.</p><button class="btn primary mt16" data-act="startCheckin">Hacer el check-in</button></section>`;
   const agg=shoppingList(ws),got=state.shop[ws]||[];
-  let total=0;for(const[id,g]of Object.entries(agg))if(!PRODUCTS[id].shop)total+=g/1000*PRODUCTS[id].eur;
+  let total=0;for(const[id,g]of Object.entries(agg))if(!ap[id].shop)total+=g/1000*ap[id].eur;
   const over=total>p.presupuesto;
   h+=`<section class="panel"><div class="row between"><div><div class="small muted">Coste estimado</div><div style="font-size:28px;font-weight:850;font-stretch:112%">${fmt0(total)} €</div></div><div class="small ${over?"":"muted"}" style="text-align:right;${over?"color:var(--warn);font-weight:700":""}">Presupuesto: ${fmt0(p.presupuesto)} €<br>${over?"Te pasas un poco":"Dentro del presupuesto"}</div></div>
-   <p class="hint">${CATALOG&&CATALOG.actualizado?`Precios de Mercadona actualizados el ${niceDate(CATALOG.actualizado)}.`:"Productos reales del catálogo de Mercadona; el coste total es una estimación por kilo."} En Consum hay equivalentes de marca Consum con precios parecidos, pero no tienen un catálogo abierto, así que ahí el precio es orientativo.${over?" Para ahorrar: compra pollo y carne en bandeja grande, usa más arroz, pasta, avena y legumbres, y cambia salmón por merluza o atún.":""}</p></section>`;
+   <p class="hint">Ya descontamos lo que tienes en tu <button type="button" class="linklike" data-tab="cocina" style="all:unset;color:var(--accent);cursor:pointer;font-weight:700">despensa</button>. ${CATALOG&&CATALOG.actualizado?`Precios de Mercadona actualizados el ${niceDate(CATALOG.actualizado)}.`:"Productos reales del catálogo de Mercadona; el coste total es una estimación por kilo."} En Consum hay equivalentes de marca Consum con precios parecidos, pero no tienen un catálogo abierto, así que ahí el precio es orientativo.${over?" Para ahorrar: compra pollo y carne en bandeja grande, usa más arroz, pasta, avena y legumbres, y cambia salmón por merluza o atún.":""}</p></section>`;
+  if(!Object.keys(agg).length)h+=`<section class="panel center"><p class="muted">Con lo que tienes en la despensa te llega para esta semana. Nada que comprar.</p></section>`;
   h+=`<section class="shop">`;
   for(const sec of SECTIONS){
-    const ids=Object.keys(agg).filter(id=>PRODUCTS[id].sec===sec);if(!ids.length)continue;
+    const ids=Object.keys(agg).filter(id=>ap[id].sec===sec);if(!ids.length)continue;
     h+=`<h3>${sec}</h3>`;
-    for(const id of ids.sort((a,b)=>PRODUCTS[a].n.localeCompare(PRODUCTS[b].n))){
-      const x=PRODUCTS[id],g=agg[id],ok=got.includes(id);
+    for(const id of ids.sort((a,b)=>ap[a].n.localeCompare(ap[b].n))){
+      const x=ap[id],g=agg[id],ok=got.includes(id);
       h+=`<label class="${ok?"got":""}"><input type="checkbox" data-shop="${id}" ${ok?"checked":""}><span class="nm">${esc(x.n)}${x.shop?`<span class="tag">${esc(x.shop)}</span>`:""}${x.mc&&x.mc.nombre?`<span class="mm" style="display:block">Mercadona: <a href="${esc(x.mc.url||"#")}" target="_blank" rel="noopener">${esc(x.mc.nombre)}</a>${x.mc.precio?` · ${String(x.mc.precio.toFixed(2)).replace(".",",")} €`:""}${x.mc.formato?` (${esc(x.mc.formato)})`:""}</span>`:""}</span><span class="qty">${qtyLabel(id,g)}</span><span class="eur">${x.shop?"":fmt0(Math.max(0.5,g/1000*x.eur))+" €"}</span></label>`;
     }
   }
-  h+=`</section>${Object.values(PRODUCTS).some(x=>x.src)?`<p class="hint mt16">Datos nutricionales de algunos productos: Open Food Facts, base de datos abierta (licencia ODbL).</p>`:""}<p class="hint mt16">Además: sal, especias, ajo, salsa de soja y papel de aluminio para los tápers. La creatina se compra aparte (mira el apartado de suplementos en Perfil).</p>`;
+  h+=`</section>${Object.values(ap).some(x=>x.src)?`<p class="hint mt16">Datos nutricionales de algunos productos: Open Food Facts, base de datos abierta (licencia ODbL).</p>`:""}<p class="hint mt16">Al marcar un producto como comprado se suma automáticamente a tu despensa. Además: sal, especias, ajo, salsa de soja y papel de aluminio para los tápers. La creatina se compra aparte (mira el apartado de suplementos en Perfil).</p>`;
   return h;
 }
 
@@ -809,7 +1159,6 @@ function renderProgreso(){
   const start=ci.length?ci[0].avg:null,now=ci.length?ci[ci.length-1].avg:null;
   h+=`<section class="stats"><div class="stat"><b>${start?fmt1(start):"–"}</b><span>kg al empezar</span></div><div class="stat"><b>${now?fmt1(now):"–"}</b><span>kg media actual</span></div><div class="stat"><b>${start?(now-start>=0?"+":"")+fmt1(now-start):"–"}</b><span>kg ganados</span></div></section>
   <section class="stats mt8"><div class="stat"><b>${streak}</b><span>semanas seguidas con check-in</span></div><div class="stat"><b>${fmt0(c.kcal)}</b><span>kcal diarias ahora</span></div><div class="stat"><b>${adherenceWeek(addDays(weekStartNow(),-7))??"–"}${adherenceWeek(addDays(weekStartNow(),-7))!=null?"%":""}</b><span>comidas hechas la semana pasada</span></div></section>`;
-  h+=trainStats();
   h+=`<section class="panel"><h3>Peso</h3><div class="mt8">${chartSVG()}</div></section>`;
   const withPh=ci.map((x,i)=>({x,i})).filter(o=>o.x.photos&&o.x.photos.front);
   if(withPh.length>=1){
@@ -864,23 +1213,25 @@ function renderResult(){
 
 function profileForm(p,isOnb){
   const sel=(id,opts,val)=>`<select class="inp" id="${id}">${opts.map(([v,l])=>`<option value="${v}" ${v===val?"selected":""}>${l}</option>`).join("")}</select>`;
-  const dayChips=(name,arr)=>`<div class="chips" role="group">${DAYS_S.map((s,i)=>`<button type="button" class="chip" data-daychip="${name}" data-i="${i}" aria-pressed="${arr.includes(i)}" aria-label="${DAYS[i]}">${s}</button>`).join("")}</div>`;
-  const excl=Object.keys(PRODUCTS).filter(id=>!["whey","aove"].includes(id)).sort((a,b)=>PRODUCTS[a].n.localeCompare(PRODUCTS[b].n));
-  return `<div class="grid2"><div class="field"><label class="f" for="pSexo">Sexo</label>${sel("pSexo",[["hombre","Hombre"],["mujer","Mujer"]],p.sexo)}</div>
+  const excl=["pollo","muslo","picada","pavo","salmon","merluza","atun","huevos","quesoBatido","yogurP","lecheE","queso","lentejas","garbanzos","aguacate","cacahuete","nueces","almendras","boniato","brocoli","pimiento","cebolla","frutosRojos"];
+  const td=p.trainingDays||[];
+  return `<div class="field"><label class="f">Objetivo</label><div class="seg" role="group" aria-label="Objetivo">${GOALS.map(([k,l])=>`<button type="button" data-goalpick="${k}" aria-pressed="${(p.goal||"volumen")===k}">${l}</button>`).join("")}</div></div>
+  <div class="grid2"><div class="field"><label class="f" for="pSexo">Sexo</label>${sel("pSexo",[["hombre","Hombre"],["mujer","Mujer"]],p.sexo)}</div>
   <div class="field"><label class="f" for="pEdad">Edad</label><input class="inp" id="pEdad" inputmode="numeric" value="${p.edad}"></div>
   <div class="field"><label class="f" for="pPeso">Peso inicial (kg)</label><input class="inp" id="pPeso" inputmode="decimal" value="${fmt1(p.peso)}" ${isOnb?"":"disabled"}></div>
   <div class="field"><label class="f" for="pAltura">Altura (cm)</label><input class="inp" id="pAltura" inputmode="numeric" value="${p.altura}"></div></div>
   <div class="grid2"><div class="field"><label class="f" for="pNivel">Nivel</label>${sel("pNivel",[["principiante","Principiante"],["intermedio","Intermedio"],["avanzado","Avanzado"]],p.nivel)}</div>
   <div class="field"><label class="f" for="pAct">Actividad fuera del gym</label>${sel("pAct",[["baja","Baja (sentado casi todo el día)"],["media","Media (camino bastante)"],["alta","Alta (trabajo de pie o físico)"]],p.actividad)}</div></div>
-  <div class="field"><label class="f">Días de gimnasio</label>${dayChips("gym",p.gymDays)}</div>
-  <div class="field"><label class="f">Días de pádel</label>${dayChips("padel",p.padelDays)}</div>
+  <div class="field"><label class="f">Qué deporte haces cada día</label>
+   <div class="traindays">${DAYS.map((dn,i)=>{const t=td.find(x=>x.d===i);return `<div class="row between trainday"><span class="small" style="font-weight:650;min-width:92px">${dn}</span><select class="inp" data-trainday="${i}"><option value="">Descanso</option>${SPORT_TYPES.map(([k,l])=>`<option value="${k}" ${t&&t.t===k?"selected":""}>${l}</option>`).join("")}</select><input class="inp" data-trainlabel="${i}" placeholder="Nombre del deporte" style="${t&&t.t==="otro"?"":"display:none"}" value="${t&&t.label?esc(t.label):""}"></div>`}).join("")}</div>
+   <div class="hint">El factor de actividad de tus calorías sube un poco por cada día que marques con deporte.</div></div>
   <div class="grid2"><div class="field"><label class="f" for="pWake">Me despierto</label><input class="inp" type="time" id="pWake" value="${p.despertar}"></div>
   <div class="field"><label class="f" for="pWork">Empiezo a trabajar</label><input class="inp" type="time" id="pWork" value="${p.trabajo}"></div>
   <div class="field"><label class="f" for="pTrain">Entreno a las</label><input class="inp" type="time" id="pTrain" value="${p.entreno}"></div>
   <div class="field"><label class="f" for="pBed">Me acuesto</label><input class="inp" type="time" id="pBed" value="${p.dormir}"></div></div>
   <div class="grid2"><div class="field"><label class="f" for="pBudget">Presupuesto semanal (€)</label><input class="inp" id="pBudget" inputmode="numeric" value="${p.presupuesto}"></div>
   <div class="field"><label class="f" for="pSuper">Supermercado</label>${sel("pSuper",[["ambos","Mercadona y Consum"],["mercadona","Mercadona"],["consum","Consum"]],p.super)}</div></div>
-  <div class="field"><label class="f">Alimentos que no quieres en tus recetas</label><div class="chips">${excl.map(id=>`<button type="button" class="chip x" data-excl="${id}" aria-pressed="${p.exclude.includes(id)}">${esc(PRODUCTS[id].n.split(" (")[0])}</button>`).join("")}</div><div class="hint">Toca los que no quieras y guarda los cambios: las recetas con esos alimentos no volverán a salir. También puedes quitarlos desde cualquier comida.</div></div>
+  <div class="field"><label class="f">Alimentos que no quieres en tus recetas</label><div class="chips">${excl.map(id=>`<button type="button" class="chip x" data-excl="${id}" aria-pressed="${p.exclude.includes(id)}">${esc(PX(id).n.split(" (")[0])}</button>`).join("")}</div><div class="hint">Toca para quitarlos. Las recetas con esos alimentos no aparecerán.</div></div>
   <div class="field"><label class="check"><input type="checkbox" id="pCafe" ${p.cafeina?"checked":""}><span>Quiero que me recuerde la cafeína antes de entrenar</span></label></div>`;
 }
 function readProfileForm(base){
@@ -888,8 +1239,12 @@ function readProfileForm(base){
   p.sexo=$("#pSexo").value;p.edad=Math.round(num("#pEdad"));p.altura=Math.round(num("#pAltura"));
   if(!$("#pPeso").disabled)p.peso=num("#pPeso");
   p.nivel=$("#pNivel").value;p.actividad=$("#pAct").value;
-  p.gymDays=[...document.querySelectorAll('[data-daychip="gym"][aria-pressed="true"]')].map(b=>+b.dataset.i);
-  p.padelDays=[...document.querySelectorAll('[data-daychip="padel"][aria-pressed="true"]')].map(b=>+b.dataset.i);
+  const goalBtn=document.querySelector('[data-goalpick][aria-pressed="true"]');p.goal=goalBtn?goalBtn.dataset.goalpick:"volumen";
+  p.trainingDays=[...document.querySelectorAll('[data-trainday]')].map(s=>{
+    const i=+s.dataset.trainday,t=s.value;if(!t)return null;
+    const lab=document.querySelector(`[data-trainlabel="${i}"]`);
+    return{d:i,t,...(t==="otro"?{label:(lab&&lab.value.trim())||"Otro deporte"}:{})};
+  }).filter(Boolean);
   p.despertar=$("#pWake").value||"07:30";p.trabajo=$("#pWork").value||"09:00";p.entreno=$("#pTrain").value||"18:30";p.dormir=$("#pBed").value||"23:30";
   p.presupuesto=Math.round(num("#pBudget"))||65;p.super=$("#pSuper").value;
   p.exclude=[...document.querySelectorAll('[data-excl][aria-pressed="true"]')].map(b=>b.dataset.excl);
@@ -902,7 +1257,7 @@ function renderSetup(){
   <section class="panel"><p>Abre <b>index.html</b> y pega la URL y la clave pública de tu proyecto de Supabase en las dos líneas de CONFIGURACIÓN del principio del script. Tienes los pasos en la guía.</p></section>`;
 }
 function renderLogin(){
-  return `<header class="top"><div><h1>Volumen</h1><div class="sub">Tu plan para ganar masa muscular</div></div></header>
+  return `<header class="top"><div><h1>Volumen</h1><div class="sub">Nutrición y gimnasio, a tu medida</div></div></header>
   <section class="panel"><div class="field"><label class="f" for="aEmail">Email</label><input class="inp" id="aEmail" type="email" autocomplete="email"></div>
   <div class="field"><label class="f" for="aPass">Contraseña</label><input class="inp" id="aPass" type="password" autocomplete="current-password"></div>
   ${ui.authMsg?`<p class="small" style="color:var(--warn)">${esc(ui.authMsg)}</p>`:""}
@@ -911,7 +1266,7 @@ function renderLogin(){
 }
 function renderOnboarding(){
   const p=ui.onb||defaultProfile();ui.onb=p;
-  return `<header class="top"><div><h1>Volumen</h1><div class="sub">Tu plan para ganar masa muscular con comida de Mercadona y Consum</div></div></header>
+  return `<header class="top"><div><h1>Volumen</h1><div class="sub">${goalTagline(p.goal)} con comida de Mercadona y Consum</div></div></header>
   <section class="panel"><p>He rellenado tus datos con lo que me contaste. Revísalos y ajusta lo que no encaje, sobre todo los horarios y los días de entreno.</p></section>
   <section class="panel">${profileForm(p,true)}</section>
   <section class="panel"><p class="small muted">Esta app calcula tu plan con fórmulas usadas en nutrición deportiva, pero no sustituye a un médico o dietista-nutricionista. Si tienes alguna enfermedad, tomas medicación o notas algo raro, consúltalo con un profesional.</p>
@@ -922,15 +1277,15 @@ function renderAjustes(){
   let h=header("Perfil","Tus datos, tus números y tus suplementos");
   h+=`<section class="panel"><h3>Cómo se calculan tus números</h3><ul class="calc mt8">
    <li><span>Metabolismo basal</span><b>${fmt0(c.bmr)} kcal</b><small>Fórmula Mifflin-St Jeor con ${fmt1(c.w)} kg, ${p.altura} cm y ${p.edad} años. Lo que gastas en reposo.</small></li>
-   <li><span>Factor de actividad</span><b>× ${c.factor.toFixed(2)}</b><small>${c.base.toFixed(2)} por tu día a día + 0,04 por cada día de gimnasio (${p.gymDays.length}) y de pádel (${p.padelDays.length}).</small></li>
+   <li><span>Factor de actividad</span><b>× ${c.factor.toFixed(2)}</b><small>${c.base.toFixed(2)} por tu día a día + 0,04 por cada día de deporte que marques (${(p.trainingDays||[]).length}).</small></li>
    <li><span>Mantenimiento</span><b>${fmt0(c.tdee)} kcal</b><small>Lo que necesitas para no ganar ni perder peso.</small></li>
-   <li><span>Superávit de volumen</span><b>+${c.surplus} kcal</b><small>Por ser ${p.nivel}: suficiente para construir músculo sin acumular grasa de más.</small></li>
+   <li><span>${c.goal==="deficit"?"Déficit":c.goal==="mantenimiento"?"Ajuste":"Superávit"}</span><b>${c.surplus>=0?"+":""}${c.surplus} kcal</b><small>Por ser ${p.nivel}${c.goal==="deficit"?": suficiente para perder grasa sin quedarte sin energía.":c.goal==="mantenimiento"?": partimos de tu mantenimiento y lo afinamos con los check-ins.":": suficiente para construir músculo sin acumular grasa de más."}</small></li>
    ${c.adj?`<li><span>Ajustes de los check-ins</span><b>${c.adj>0?"+":""}${c.adj} kcal</b><small>Según cómo ha evolucionado tu peso.</small></li>`:""}
    <li><span>Objetivo diario</span><b>${fmt0(c.kcal)} kcal</b></li>
-   <li><span class="dotp">Proteína</span><b>${c.P} g</b><small>2 g por kilo: el material para construir músculo.</small></li>
-   <li><span class="dotg">Grasa</span><b>${c.F} g</b><small>1 g por kilo: necesaria para tus hormonas.</small></li>
+   <li><span class="dotp">Proteína</span><b>${c.P} g</b><small>${c.goal==="deficit"?"2,2":"2"} g por kilo: ${c.goal==="deficit"?"protege el músculo mientras bajas de peso.":"el material para construir músculo."}</small></li>
+   <li><span class="dotg">Grasa</span><b>${c.F} g</b><small>${c.goal==="deficit"?"0,8":"1"} g por kilo: necesaria para tus hormonas.</small></li>
    <li><span class="dotc">Carbohidratos</span><b>${c.C} g</b><small>El resto de calorías: tu energía para entrenar.</small></li>
-   <li><span>Ritmo objetivo</span><b>${fmt1(c.range[0])}–${fmt1(c.range[1])} kg/sem</b><small>Si vas más lento dos semanas seguidas, suben las calorías; si vas mucho más rápido, bajan.</small></li></ul></section>`;
+   <li><span>Ritmo objetivo</span><b>${fmt1(c.range[0])}–${fmt1(c.range[1])} kg/sem</b><small>${c.goal==="mantenimiento"?"Si te sales de este rango dos semanas seguidas, ajustamos calorías para estabilizarte.":"Si vas más lento dos semanas seguidas, suben las calorías; si vas mucho más rápido, bajan."}</small></li></ul></section>`;
   h+=`<section class="panel"><h3>Suplementos</h3>
    <div class="supp"><b>Creatina monohidrato: 5 g al día</b><p class="small">El suplemento con más evidencia para ganar fuerza y masa muscular. Tómala todos los días, también los de descanso; la hora no importa, lo importante es no saltártela (la app te la pone con el desayuno). No hace falta fase de carga. Busca que ponga "creatina monohidrato" y, si puede ser, el sello Creapure. Un bote de 300–500 g te dura 2–3 meses.${(()=>{const c=CATALOG&&CATALOG.productos&&CATALOG.productos.creatina;return c?` En Mercadona la tienes en parafarmacia: <a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.nombre)}</a>${c.precio?` (${String(c.precio.toFixed(2)).replace(".",",")} €)`:""}; mira en la etiqueta que sea monohidrato.`:""})()} Es normal ganar 1–2 kg las primeras semanas: es agua dentro del músculo, no grasa. Bebe agua de sobra.</p></div>
    <div class="supp"><b>Proteína en polvo (whey): opcional</b><p class="small">No es obligatoria: tu plan ya llega a ${c.P} g de proteína con comida. Úsala solo si un día no llegas o por comodidad (1 cacito de 30 g ≈ 24 g de proteína). Si la lactosa te sienta mal, busca "isolate".</p></div>
@@ -939,177 +1294,13 @@ function renderAjustes(){
    <div class="supp"><b>Lo que no necesitas</b><p class="small">Quemagrasas, BCAA, glutamina o "ganadores de peso" caros: tu batido casero hace lo mismo por mucho menos. Y nunca esteroides, SARMs ni prohormonas: tienen riesgos serios para la salud y no los necesitas para crecer.</p></div></section>`;
   h+=`<section class="panel"><h3>Recordatorios</h3><p class="small muted">La app no puede avisarte cuando está cerrada. Descarga este calendario y ábrelo en el móvil: te añadirá avisos diarios de pesaje y creatina, y el check-in de cada lunes.</p><button class="btn ghost block mt8" data-act="ics">Descargar recordatorios (.ics)</button></section>`;
   h+=`<section class="panel"><h3>Tus datos</h3>${profileForm(p,false)}<button class="btn primary block" data-act="saveProfile">Guardar cambios</button></section>`;
+  h+=`<section class="panel"><h3>Claves de API (opcional)</h3><p class="small muted">Se guardan solo en tu cuenta, nunca en el código de la app. Ojo: cualquiera que abra el código fuente de esta web en el navegador puede ver estas claves, así que pon un límite de gasto bajo en cada proveedor.</p>
+   <div class="field mt8"><label class="f" for="keyAnthropic">Clave de Anthropic (para detectar ingredientes por foto)</label><input class="inp" id="keyAnthropic" type="password" value="${esc(state.apiKeys.anthropic||"")}" placeholder="sk-ant-..."></div>
+   <div class="field"><label class="f" for="keyHevy">Clave de Hevy Pro (opcional, para importar tu biblioteca de ejercicios)</label><input class="inp" id="keyHevy" type="password" value="${esc(state.apiKeys.hevy||"")}" placeholder="Tu API key de hevy.com/settings?developer"></div>
+   <div class="grid2"><button class="btn primary" data-act="saveKeys">Guardar claves</button><button type="button" class="btn ghost" data-act="syncHevy">Probar sincronización con Hevy</button></div>
+   <p class="hint">La API de Hevy está pensada para servidores; si el navegador la bloquea, la app te avisa y sigue usando su base de ejercicios propia sin problema.</p></section>`;
   h+=`<section class="panel"><h3>Copia y borrado</h3><div class="grid2 mt8" style="grid-template-columns:1fr 1fr 1fr"><button class="btn ghost" data-act="export">Exportar mis datos</button><button class="btn ghost" data-act="logout">Cerrar sesión</button><button class="btn ghost" data-act="reset" style="color:var(--warn);border-color:var(--warn)">Empezar de cero</button></div><p class="hint">La app no sustituye a un médico o dietista-nutricionista.</p></section>`;
   return h;
-}
-
-
-/* ============ VETOS Y CAMBIO DE COMIDAS ============ */
-const shortName=id=>PRODUCTS[id].n.split(" (")[0];
-function fixState(){
-  state.train=state.train||{};state.hidden=state.hidden||[];
-  state.profile.exclude=state.profile.exclude||[];state.swaps=state.swaps||{};
-}
-function breaksPlan(id){
-  const ex=[...state.profile.exclude,id],hid=state.hidden||[];
-  for(const s of SLOTS){
-    const n=RECIPES.filter(r=>r.slots.includes(s)&&!hid.includes(r.id)&&!r.items.some(i=>ex.includes(i[0]))).length;
-    if(n<2)return SLOT_INFO[s].l;
-  }
-  return null;
-}
-function cleanSwaps(){
-  const ex=state.profile.exclude,hid=state.hidden||[];
-  for(const ws of Object.keys(state.swaps)){
-    for(const k of Object.keys(state.swaps[ws])){
-      const r=RECIPES.find(x=>x.id===state.swaps[ws][k]);
-      if(!r||hid.includes(r.id)||r.items.some(i=>ex.includes(i[0])))delete state.swaps[ws][k];
-    }
-  }
-}
-function dislikeChips(m){
-  const ids=[...new Set(m.items.map(i=>i[0]))].filter(id=>id!=="aove");
-  return `<div class="small muted mt8">¿Hay algo que no te guste? Quítalo y no volverá a salir:</div><div class="chips mt8">${ids.map(id=>`<button class="chip" data-noing="${id}">✕ ${esc(shortName(id))}</button>`).join("")}</div>`;
-}
-function batchDays(d){return [[0,1,2],[3,4],[5,6]][blockOf(d)]}
-function openSheet(d,slot){ui.sheet={d,slot,scope:"day"};document.body.style.overflow="hidden";renderSheet()}
-function closeSheet(){ui.sheet=null;const s=$("#sheet");s.hidden=true;s.innerHTML="";document.body.style.overflow=""}
-function renderSheet(){
-  const sh=ui.sheet,s=$("#sheet");if(!sh)return;
-  const ws=weekStartNow(),c=calc(),si=SLOT_INFO[sh.slot],cur=recipeAt(ws,sh.d,sh.slot);
-  const batch=(sh.slot==="comida"||sh.slot==="cena"),blk=batchDays(sh.d);
-  let list=recipesFor(sh.slot);if(!list.some(r=>r.id===cur.id))list=[cur,...list];
-  const ex=state.profile.exclude,hid=state.hidden;
-  const rows=list.map(r=>{
-    const m=scaleRecipe(r,c.kcal*si.k,c.P*si.p,c.F*si.k).m,isCur=r.id===cur.id;
-    return `<div class="opt ${isCur?"cur":""}"><div class="row between" style="flex-wrap:nowrap"><div><b>${esc(r.n)}</b><div class="mm">${fmt0(m.k)} kcal · ${fmt0(m.p)} g prot · ${r.min} min${r.portable?" · táper":""}${r.batch?" · batch":""}</div></div>${isCur?'<span class="tag">Actual</span>':`<button class="btn sm primary" data-pick="${r.id}">Elegir</button>`}</div><button class="linkbtn" data-hide="${r.id}">No me gusta esta receta</button></div>`;
-  }).join("");
-  const swapped=!!(state.swaps[ws]||{})[`${sh.d}-${sh.slot}`];
-  s.innerHTML=`<div class="sheetbox" role="dialog" aria-modal="true" aria-label="Cambiar comida">
-    <div class="row between"><h2>${si.l} del ${DAYS[sh.d].toLowerCase()}</h2><button class="btn sm ghost" data-act="closeSheet">Cerrar</button></div>
-    <p class="small muted">Todas las opciones se ajustan a tus calorías y proteína.</p>
-    ${batch?`<div class="seg mt8" role="group" aria-label="Dónde aplicar el cambio"><button data-scope="day" aria-pressed="${sh.scope==="day"}">Solo este día</button><button data-scope="block" aria-pressed="${sh.scope==="block"}">Todo el bloque (${blk.length} días)</button></div><p class="hint">El bloque son los días que comen del mismo batch cooking.</p>`:""}
-    ${rows}
-    ${swapped?`<button class="btn ghost block mt8" data-act="unswap">Volver a la receta original</button>`:""}
-    ${ex.length?`<div class="hr"></div><div class="small muted">Ingredientes que has quitado (toca para permitirlos otra vez):</div><div class="chips mt8">${ex.map(id=>`<button class="chip" data-unexcl="${id}">${esc(shortName(id))} ✕</button>`).join("")}</div>`:""}
-    ${hid.length?`<button class="linkbtn mt8" data-act="unhide">Recuperar ${hid.length} ${hid.length===1?"receta oculta":"recetas ocultas"}</button>`:""}
-  </div>`;
-  s.hidden=false;
-}
-
-/* ============ ENTRENOS (ejercicios de free-exercise-db, dominio público) ============ */
-const EXR="https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/";
-const EX={
- "Dumbbell_Bench_Press":{n:"Press de banca con mancuernas",m:"Pecho, tríceps",db:1,c:"Tumbado en el banco, mancuernas a la altura del pecho. Empuja hacia arriba sin chocarlas y baja en 2 segundos hasta notar el estiramiento del pecho. Codos a unos 45° del cuerpo, no abiertos del todo."},
- "Wide-Grip_Lat_Pulldown":{n:"Jalón al pecho, agarre ancho",m:"Dorsal (te da anchura de espalda)",c:"Agarra la barra algo más ancho que los hombros. Lleva los codos hacia las costillas y la barra a la parte alta del pecho, sin balancear el torso. Sube despacio hasta estirar del todo."},
- "Dumbbell_Shoulder_Press":{n:"Press de hombros con mancuernas",m:"Hombros, tríceps",db:1,c:"Sentado con la espalda apoyada. Empuja las mancuernas hacia arriba hasta casi estirar los codos y baja hasta la altura de las orejas. No arquees la zona lumbar."},
- "Seated_Cable_Rows":{n:"Remo sentado en polea",m:"Espalda media, dorsal",c:"Pecho alto y espalda recta. Tira del agarre hacia el ombligo juntando los omóplatos, aguanta 1 segundo y vuelve estirando los brazos sin encorvarte."},
- "Side_Lateral_Raise":{n:"Elevaciones laterales",m:"Hombro lateral (el que ensancha)",db:1,c:"De pie con mancuernas ligeras. Sube los brazos hacia los lados hasta la altura de los hombros con el codo algo flexionado y baja despacio. Peso ligero y sin balanceo: es el ejercicio que más ancho te hace parecer."},
- "Triceps_Pushdown":{n:"Extensión de tríceps en polea",m:"Tríceps",c:"Codos pegados a las costillas. Estira los brazos hacia abajo sin mover los codos y sube controlando hasta unos 90°."},
- "Barbell_Curl":{n:"Curl de bíceps con barra",m:"Bíceps",c:"De pie, codos pegados al cuerpo. Sube la barra sin balancear la espalda y baja en 2–3 segundos hasta estirar del todo."},
- "Goblet_Squat":{n:"Sentadilla goblet",m:"Cuádriceps, glúteos",c:"Sujeta una mancuerna contra el pecho. Pies algo más anchos que las caderas. Baja con la espalda recta hasta que los muslos queden paralelos al suelo y sube empujando el suelo."},
- "Stiff-Legged_Dumbbell_Deadlift":{n:"Peso muerto rumano con mancuernas",m:"Femoral, glúteos, lumbar",db:1,c:"Mancuernas pegadas a las piernas y rodillas casi estiradas. Lleva la cadera hacia atrás y baja con la espalda recta hasta notar el estiramiento detrás del muslo. Sube empujando la cadera hacia delante."},
- "Leg_Press":{n:"Prensa de piernas",m:"Cuádriceps, glúteos",c:"Pies a la anchura de los hombros. Baja hasta unos 90° de rodilla sin despegar la zona lumbar del respaldo y empuja sin bloquear del todo las rodillas."},
- "Lying_Leg_Curls":{n:"Curl femoral tumbado",m:"Femoral",c:"Tumbado boca abajo, con la cadera pegada al banco. Flexiona las rodillas llevando el rodillo hacia los glúteos y baja en 2–3 segundos."},
- "Standing_Calf_Raises":{n:"Elevación de gemelos de pie",m:"Gemelos",c:"Sube de puntillas todo lo que puedas, aguanta 1 segundo arriba y baja hasta estirar del todo. Sin rebotes."},
- "Plank":{n:"Plancha",m:"Abdomen",time:1,c:"Apoyado en antebrazos y puntas de los pies, cuerpo en línea recta de la cabeza a los talones. Aprieta abdomen y glúteos y respira con calma. Aguanta el tiempo indicado."},
- "Incline_Dumbbell_Press":{n:"Press inclinado con mancuernas",m:"Pecho superior, hombros",db:1,c:"Banco a unos 30° (no más). Empuja las mancuernas hacia arriba y algo juntas; baja controlando hasta notar el estiramiento del pecho."},
- "Close-Grip_Front_Lat_Pulldown":{n:"Jalón al pecho, agarre estrecho",m:"Dorsal, bíceps",c:"Agarre estrecho o neutro. Tira de la barra hacia la parte alta del pecho con los codos hacia abajo y atrás. Sube controlando."},
- "One-Arm_Dumbbell_Row":{n:"Remo con mancuerna a una mano",m:"Espalda media, dorsal",db:1,c:"Apoya una rodilla y una mano en el banco con la espalda plana. Tira de la mancuerna hacia la cadera con el codo pegado al cuerpo y baja estirando del todo. Haz todas las repeticiones y cambia de lado."},
- "Cable_Seated_Lateral_Raise":{n:"Elevación lateral en polea",m:"Hombro lateral",c:"Sentado, con la polea baja y un brazo cada vez. Sube el brazo hacia el lado hasta la altura del hombro y baja despacio. La polea mantiene la tensión todo el recorrido."},
- "Reverse_Flyes":{n:"Pájaros (hombro posterior)",m:"Hombro posterior, espalda alta",db:1,c:"Inclinado hacia delante con la espalda recta y mancuernas ligeras. Abre los brazos hacia los lados hasta la altura de la espalda apretando los omóplatos. Baja despacio."},
- "Hammer_Curls":{n:"Curl martillo",m:"Bíceps, antebrazo",db:1,c:"Mancuernas con agarre neutro (palmas mirándose). Sube alternando o a la vez, con los codos quietos, y baja controlando."},
- "Cable_Rope_Overhead_Triceps_Extension":{n:"Extensión de tríceps sobre la cabeza en polea",m:"Tríceps",c:"De espaldas a la polea con la cuerda detrás de la cabeza. Estira los brazos hacia delante y arriba sin mover los codos y vuelve controlando."},
- "Split_Squat_with_Dumbbells":{n:"Zancada estática con mancuernas",m:"Cuádriceps, glúteos",db:1,c:"Un pie delante y otro detrás, con mancuernas a los lados. Baja la rodilla de atrás hacia el suelo con el torso recto y sube empujando con la pierna de delante. Todas las repeticiones y cambias de pierna."},
- "Barbell_Hip_Thrust":{n:"Hip thrust (puente de glúteos con barra)",m:"Glúteos",c:"Espalda alta apoyada en un banco y la barra sobre la cadera (con almohadilla). Sube la cadera hasta que el cuerpo quede recto y aprieta los glúteos 1 segundo arriba. Baja controlando."},
- "Leg_Extensions":{n:"Extensión de cuádriceps",m:"Cuádriceps",c:"Sentado en la máquina, estira las piernas hasta arriba, aprieta 1 segundo y baja en 2–3 segundos sin dejar caer el peso."},
- "Seated_Leg_Curl":{n:"Curl femoral sentado",m:"Femoral",c:"Sentado con la espalda apoyada y el rodillo sobre los tobillos. Lleva los talones hacia abajo y atrás y sube controlando."},
- "Cable_Crunch":{n:"Crunch en polea",m:"Abdomen",c:"De rodillas frente a la polea con la cuerda junto a la cabeza. Curva el tronco llevando los codos hacia las rodillas usando el abdomen, no los brazos, y sube despacio."}
-};
-const E=(id,s,a,b,r,inc)=>({id,s,a,b,r,inc});
-const ROUT={
- fbA:{name:"Cuerpo completo A",focus:"Todo el cuerpo con ejercicios básicos.",ex:[E("Goblet_Squat",3,8,12,90,2),E("Dumbbell_Bench_Press",3,8,12,120,2),E("Wide-Grip_Lat_Pulldown",3,8,12,120,2.5),E("Dumbbell_Shoulder_Press",2,10,12,90,2),E("Lying_Leg_Curls",2,10,15,60,2.5),E("Plank",2,30,60,60,0)]},
- fbB:{name:"Cuerpo completo B",focus:"Todo el cuerpo, con más peso en pierna y espalda.",ex:[E("Leg_Press",3,10,12,90,5),E("Incline_Dumbbell_Press",3,8,12,120,2),E("Seated_Cable_Rows",3,10,12,90,2.5),E("Side_Lateral_Raise",3,12,15,60,1),E("Stiff-Legged_Dumbbell_Deadlift",3,10,12,90,2),E("Barbell_Curl",2,10,12,60,2.5),E("Triceps_Pushdown",2,10,15,60,2.5)]},
- fbC:{name:"Cuerpo completo C",focus:"Todo el cuerpo, con trabajo extra de hombros y brazos.",ex:[E("Split_Squat_with_Dumbbells",3,8,12,90,2),E("Dumbbell_Bench_Press",3,8,12,120,2),E("Close-Grip_Front_Lat_Pulldown",3,10,12,90,2.5),E("Cable_Seated_Lateral_Raise",3,12,15,60,1),E("Hammer_Curls",2,10,12,60,2),E("Cable_Rope_Overhead_Triceps_Extension",2,10,15,60,2.5),E("Cable_Crunch",2,12,15,60,2.5)]},
- torA:{name:"Torso A",focus:"Pecho, espalda, hombros y brazos. Prioridad: anchura de espalda y hombros.",ex:[E("Dumbbell_Bench_Press",3,8,10,120,2),E("Wide-Grip_Lat_Pulldown",3,8,12,120,2.5),E("Dumbbell_Shoulder_Press",3,8,12,90,2),E("Seated_Cable_Rows",3,10,12,90,2.5),E("Side_Lateral_Raise",3,12,15,60,1),E("Triceps_Pushdown",3,10,15,60,2.5),E("Barbell_Curl",3,10,12,60,2.5)]},
- pieA:{name:"Pierna A",focus:"Cuádriceps, femoral, gemelos y abdomen.",ex:[E("Goblet_Squat",3,10,12,90,2),E("Stiff-Legged_Dumbbell_Deadlift",3,10,12,90,2),E("Leg_Press",3,10,12,90,5),E("Lying_Leg_Curls",3,10,15,60,2.5),E("Standing_Calf_Raises",4,12,15,60,2.5),E("Plank",3,30,60,60,0)]},
- torB:{name:"Torso B",focus:"Pecho superior, espalda y hombros (laterales y posteriores) para ganar anchura.",ex:[E("Incline_Dumbbell_Press",3,8,12,120,2),E("Close-Grip_Front_Lat_Pulldown",3,10,12,90,2.5),E("One-Arm_Dumbbell_Row",3,10,12,90,2),E("Cable_Seated_Lateral_Raise",3,12,15,60,1),E("Reverse_Flyes",3,12,15,60,1),E("Hammer_Curls",3,10,12,60,2),E("Cable_Rope_Overhead_Triceps_Extension",3,10,15,60,2.5)]},
- pieB:{name:"Pierna B",focus:"Zancadas, glúteo, cuádriceps, femoral y abdomen.",ex:[E("Split_Squat_with_Dumbbells",3,8,12,90,2),E("Barbell_Hip_Thrust",3,8,12,90,5),E("Leg_Extensions",3,12,15,60,2.5),E("Seated_Leg_Curl",3,10,15,60,2.5),E("Standing_Calf_Raises",4,12,15,60,2.5),E("Cable_Crunch",3,12,15,60,2.5)]},
- hom:{name:"Hombros y brazos",focus:"Día extra para hombros anchos y brazos.",ex:[E("Dumbbell_Shoulder_Press",3,8,12,90,2),E("Side_Lateral_Raise",4,12,15,60,1),E("Reverse_Flyes",3,12,15,60,1),E("Barbell_Curl",3,10,12,60,2.5),E("Hammer_Curls",2,10,12,60,2),E("Triceps_Pushdown",3,10,15,60,2.5),E("Cable_Rope_Overhead_Triceps_Extension",2,10,15,60,2.5)]}
-};
-const kgTxt=x=>String(Math.round(x*100)/100).replace(".",",");
-function gymSorted(){return [...state.profile.gymDays].sort((a,b)=>a-b)}
-function routinePlan(){const n=gymSorted().length;return n<=1?["fbA"]:n===2?["fbA","fbB"]:n===3?["fbA","fbB","fbC"]:n===4?["torA","pieA","torB","pieB"]:["torA","pieA","torB","pieB","hom"]}
-function routineFor(d){const g=gymSorted(),i=g.indexOf(d);if(i<0)return null;const t=routinePlan();return ROUT[t[i%t.length]]}
-function didSets(date){const t=state.train&&state.train[date];return t?Object.values(t.ex||{}).flat().some(s=>s.r>0):false}
-function trainedOn(date){return didSets(date)}
-function trainStats(){
-  const ws=weekStartNow();let wk=0,tot=0;
-  for(const dt of Object.keys(state.train||{})){if(didSets(dt)){tot++;if(dt>=ws&&dt<=addDays(ws,6))wk++}}
-  return `<section class="stats mt8" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${wk} / ${gymSorted().length}</b><span>entrenos esta semana</span></div><div class="stat"><b>${tot}</b><span>entrenos apuntados en total</span></div></section>`;
-}
-function lastLog(id,date){
-  const ds=Object.keys(state.train).filter(x=>x<date).sort().reverse();
-  for(const x of ds){const s=(state.train[x].ex||{})[id];if(s){const ok=s.filter(v=>v.r>0);if(ok.length)return{date:x,sets:ok}}}
-  return null;
-}
-function suggest(e,last){
-  const x=EX[e.id],tm=!!x.time;
-  if(!last)return{kg:"",txt:tm?`Aguanta entre ${e.a} y ${e.b} segundos por serie.`:`Elige un peso con el que llegues a ${e.a} repeticiones dejando 1–2 en reserva. Es solo el punto de partida: apunta lo que uses.`};
-  const desc=last.sets.map(s=>tm?`${s.r} s`:`${s.k?kgTxt(s.k)+" kg × ":""}${s.r}`).join(" · ");
-  const hit=last.sets.length>=e.s&&last.sets.every(s=>s.r>=e.b);
-  const head=`Última vez (${niceDate(last.date)}): ${desc}. `;
-  if(tm)return{kg:"",txt:head+(hit?"Prueba a aguantar 5 segundos más.":"Intenta igualarlo o mejorarlo.")};
-  const mk=Math.max(...last.sets.map(s=>s.k||0));
-  if(hit&&mk>0)return{kg:Math.round((mk+e.inc)*100)/100,txt:head+`Lo completaste todo: hoy prueba ${kgTxt(mk+e.inc)} kg.`};
-  return{kg:mk||"",txt:head+`Repite${mk?" "+kgTxt(mk)+" kg":""} e intenta sumar repeticiones hasta llegar a ${e.b} en todas las series.`};
-}
-function defaultTrainDay(){
-  const g=gymSorted(),d=dayIdx(today());if(!g.length)return null;
-  if(g.includes(d))return d;
-  const nx=g.find(x=>x>d);return nx!=null?nx:g[g.length-1];
-}
-function renderEntreno(){
-  const g=gymSorted();
-  let h=header("Entreno","Tu rutina y tus pesos");
-  if(!g.length)return h+`<section class="panel"><p>No tienes días de gimnasio marcados. Añádelos en <b>Perfil → Tus datos</b> y aquí aparecerá tu rutina.</p></section>`;
-  if(ui.trainDay==null||!g.includes(ui.trainDay))ui.trainDay=defaultTrainDay();
-  const sel=ui.trainDay,ws=weekStartNow(),date=addDays(ws,sel),rt=routineFor(sel);
-  ui.trainDate=date;ui.trainName=rt.name;
-  const cur=(state.train[date]||{}).ex||{};
-  const done=rt.ex.filter(e=>(cur[e.id]||[]).some(s=>s.r>0)).length;
-  h+=`<div class="days" role="group" aria-label="Día de entreno">${g.map(i=>`<button data-tday="${i}" aria-pressed="${i===sel}" class="${i===dayIdx(today())?"today":""}">${DAYS_S[i]}<small>${routineFor(i).name.replace("Cuerpo completo","CC")}</small></button>`).join("")}</div>`;
-  h+=`<section class="panel"><div class="row between"><h2>${esc(rt.name)}</h2><span class="small muted" id="trainProg">${done} de ${rt.ex.length} apuntados</span></div>
-   <p class="small">${esc(rt.focus)} ${DAYS[sel]} ${niceDate(date)}.</p>
-   <details><summary>Cómo entrenar</summary><ul class="small" style="padding-left:18px;margin:8px 0 0"><li>Calienta 5 minutos (bici o cinta suave) y haz 1–2 series ligeras del primer ejercicio.</li><li>Termina cada serie dejando 1–2 repeticiones en reserva. Si la técnica se rompe, baja el peso.</li><li>Cuando completes todas las series en el máximo de repeticiones, sube un poco el peso la próxima vez. Esa es la forma de crecer.</li><li>En los ejercicios con mancuernas, apunta los kilos de <b>una sola mancuerna</b>.</li><li>Si un movimiento es nuevo, pide a alguien del gimnasio que te revise la técnica.</li></ul></details></section>`;
-  for(const e of rt.ex){
-    const x=EX[e.id],last=lastLog(e.id,date),sg=suggest(e,last),saved=cur[e.id]||[];
-    let rows="";
-    for(let i=0;i<e.s;i++){
-      const sv=saved[i],kv=sv&&sv.k!=null&&sv.k!==0?sv.k:(sv&&sv.r>0?"":sg.kg),rv=sv&&sv.r>0?sv.r:"",ph=last&&last.sets[i]?last.sets[i].r:e.a;
-      rows+=`<div class="setrow"><span class="sn">${i+1}</span>${x.time?"":`<input class="inp sm" inputmode="decimal" data-tk="${e.id}|${i}" value="${kv===""?"":String(kv).replace(".",",")}" placeholder="kg" aria-label="Kilos serie ${i+1}"><span class="muted">kg ×</span>`}<input class="inp sm" inputmode="numeric" data-tr="${e.id}|${i}" value="${rv}" placeholder="${ph}" aria-label="${x.time?"Segundos":"Repeticiones"} serie ${i+1}"><span class="muted">${x.time?"seg":"rep"}</span></div>`;
-    }
-    h+=`<article class="exc"><h3 style="font-stretch:105%">${esc(x.n)}</h3><div class="mm">${esc(x.m)} · ${e.s} × ${e.a}${e.b!==e.a?"–"+e.b:""}${x.time?" seg":""} · descanso ${e.r>=120?"2 min":e.r>=90?"90 s":"60 s"}${x.db?" · kg por mancuerna":""}</div>
-     <div class="sug">${esc(sg.txt)}</div>${rows}
-     <details><summary>Cómo hacerlo</summary><p class="small">${esc(x.c)}</p><div class="imgs"><img loading="lazy" src="${EXR}${e.id}/0.jpg" alt="${esc(x.n)}, posición inicial"><img loading="lazy" src="${EXR}${e.id}/1.jpg" alt="${esc(x.n)}, posición final"></div></details></article>`;
-  }
-  h+=`<p class="hint">Ejercicios e imágenes de <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">free-exercise-db</a> (dominio público). Rutina de ${g.length} días para principiantes, no sustituye a un entrenador. Si notas dolor (no el cansancio normal del músculo), para y consúltalo.</p>`;
-  return h;
-}
-function updTrainProg(){
-  const rt=routineFor(ui.trainDay);if(!rt)return;const cur=(state.train[ui.trainDate]||{}).ex||{};
-  const el=$("#trainProg");if(el)el.textContent=`${rt.ex.filter(e=>(cur[e.id]||[]).some(s=>s.r>0)).length} de ${rt.ex.length} apuntados`;
-}
-function saveSetRow(row){
-  const kI=row.querySelector("[data-tk]"),rI=row.querySelector("[data-tr]");
-  const src=(kI||rI).dataset.tk||rI.dataset.tr,[id,i]=src.split("|"),idx=+i;
-  const num=v=>{const n=parseFloat(String(v).replace(",","."));return isFinite(n)&&n>0?n:0};
-  const dt=ui.trainDate;
-  const tr=state.train[dt]=state.train[dt]||{rt:ui.trainName,ex:{}};
-  const arr=tr.ex[id]=tr.ex[id]||[];
-  while(arr.length<=idx)arr.push({k:0,r:0});
-  arr[idx]={k:kI?num(kI.value):0,r:num(rI.value)};
-  persist();updTrainProg();
 }
 
 /* ============ EVENTOS ============ */
@@ -1120,6 +1311,13 @@ function bindAfter(){
   const a=$("#cmpA"),b=$("#cmpB");
   if(a)a.addEventListener("change",()=>{ui.cmpA=+a.value;render()});
   if(b)b.addEventListener("change",()=>{ui.cmpB=+b.value;render()});
+  document.querySelectorAll("[data-trainday]").forEach(s=>s.addEventListener("change",()=>{
+    const lab=document.querySelector(`[data-trainlabel="${s.dataset.trainday}"]`);
+    if(lab)lab.style.display=s.value==="otro"?"":"none";
+  }));
+  const di=$("#detectInput");if(di)di.addEventListener("change",()=>{const f=di.files&&di.files[0];if(f)detectIngredients(f)});
+  document.querySelectorAll("[data-detchk]").forEach(i=>i.addEventListener("change",()=>ui.detect.items[+i.dataset.detchk].include=i.checked));
+  document.querySelectorAll("[data-detqty]").forEach(i=>i.addEventListener("input",()=>ui.detect.items[+i.dataset.detqty].qty=Math.max(1,Math.round(parseFloat(i.value)||1))));
   const ca=$("#ciAvg");if(ca)ca.addEventListener("input",()=>ui.draft.avg=ca.value);
   document.querySelectorAll("[data-meas]").forEach(i=>i.addEventListener("input",()=>ui.draft.meas[i.dataset.meas]=i.value));
   document.querySelectorAll("[data-photo]").forEach(inp=>inp.addEventListener("change",async()=>{
@@ -1130,41 +1328,48 @@ function bindAfter(){
   }));
 }
 document.addEventListener("click",async e=>{
-  if(e.target.id==="sheet"){closeSheet();return}
   const t=e.target.closest("button,[data-shop],[data-meal],[data-act]");if(!t)return;
   const ds=t.dataset;
-  if(ds.tab){ui.tab=ds.tab;ui.view=null;if(ds.tab==="entreno")ui.trainDay=null;render();window.scrollTo(0,0);return}
+  if(ds.tab){ui.tab=ds.tab;ui.view=null;render();window.scrollTo(0,0);return}
   if(ds.day!=null&&t.closest(".days")){ui.planDay=+ds.day;render();return}
-  if(ds.daychip){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")==="true"?"false":"true");return}
   if(ds.excl){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")==="true"?"false":"true");return}
+  if(ds.goalpick){t.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===t?"true":"false"));return}
   if(ds.pose){ui.cmpPose=ds.pose;render();return}
+  if(ds.cocinatab){ui.cocinaTab=ds.cocinatab;render();return}
+  if(ds.rcslot){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")==="true"?"false":"true");return}
+  if(ds.rcremove!=null){t.closest(".rcrow").remove();return}
+  if(ds.editreceta){ui.editRecipe=JSON.parse(JSON.stringify(allRecipes().find(r=>r.id===ds.editreceta)));ui.view="recetaEdit";render();window.scrollTo(0,0);return}
+  if(ds.editingrediente){
+    const id=ds.editingrediente,ap=allProducts()[id];
+    ui.editIngredient={id,n:ap.n,sec:ap.sec,k:ap.k,p:ap.p,c:ap.c,f:ap.f,eur:ap.eur||0,isNew:false};
+    ui.view="ingredienteEdit";render();window.scrollTo(0,0);return;
+  }
+  if(ds.pantryinc||ds.pantrydec){
+    const id=ds.pantryinc||ds.pantrydec,cur=state.pantry[id]||{qty:0,unit:"g"};
+    const step=50;
+    state.pantry[id]={qty:Math.max(0,cur.qty+(ds.pantryinc?step:-step)),unit:cur.unit,updatedAt:Date.now()};
+    persist();render();return;
+  }
+  if(ds.gymtab){ui.gymTab=ds.gymtab;render();return}
+  if(ds.editrutina){ui.editRutina=JSON.parse(JSON.stringify(state.routines.find(r=>r.id===ds.editrutina)));ui.view="rutinaEdit";render();window.scrollTo(0,0);return}
+  if(ds.rtday!=null){t.setAttribute("aria-pressed",t.getAttribute("aria-pressed")==="true"?"false":"true");return}
+  if(ds.rtremoveex!=null){t.closest(".rtexblock").remove();return}
+  if(ds.rtremoveset!=null){t.closest(".rtset").remove();return}
   if(ds.rate){ui.draft.rate[ds.rate]=+ds.v;t.parentElement.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b===t));return}
-  if(ds.swap){const[dd,slot]=ds.swap.split("-");openSheet(+dd,slot);return}
-  if(ds.scope){ui.sheet.scope=ds.scope;renderSheet();return}
-  if(ds.pick){
-    const sh=ui.sheet,ws=weekStartNow(),batch=(sh.slot==="comida"||sh.slot==="cena");
+  if(ds.swap){
+    const ws=weekStartNow(),[d,slot]=ds.swap.split("-");const list=recipesFor(slot);const cur=recipeAt(ws,+d,slot);
+    const next=list[(list.findIndex(r=>r.id===cur.id)+1)%list.length];
     state.swaps[ws]=state.swaps[ws]||{};
-    const days=(sh.scope==="block"&&batch)?batchDays(sh.d):[sh.d];
-    for(const dd of days)state.swaps[ws][`${dd}-${sh.slot}`]=ds.pick;
-    persist();closeSheet();render();toast(days.length>1?"Cambiado en todo el bloque":"Comida cambiada");return;
+    const blockDays=(slot==="comida"||slot==="cena")?[[0,1,2],[3,4],[5,6]][blockOf(+d)]:[+d];
+    for(const dd of blockDays)state.swaps[ws][`${dd}-${slot}`]=next.id;
+    persist();render();if(blockDays.length>1)toast(`Cambiado en todo el bloque de batch cooking`);return;
   }
-  if(ds.hide){
-    const r=RECIPES.find(x=>x.id===ds.hide);
-    const bad=r.slots.find(s=>recipesFor(s).filter(x=>x.id!==r.id).length<2);
-    if(bad){toast(`No puedo ocultar más recetas de ${SLOT_INFO[bad].l.toLowerCase()}`);return}
-    state.hidden.push(r.id);cleanSwaps();persist();render();renderSheet();toast("No volverá a salir esa receta");return;
-  }
-  if(ds.noing){
-    const b=breaksPlan(ds.noing),nm=shortName(ds.noing);
-    if(b){toast(`Sin ${nm.toLowerCase()} no me quedan recetas de ${b.toLowerCase()}`);return}
-    state.profile.exclude.push(ds.noing);cleanSwaps();persist();render();toast(`Hecho: ya no saldrá ${nm.toLowerCase()}`);return;
-  }
-  if(ds.unexcl){
-    state.profile.exclude=state.profile.exclude.filter(x=>x!==ds.unexcl);persist();render();renderSheet();return;
-  }
-  if(ds.tday!=null){ui.trainDay=+ds.tday;render();return}
   if(ds.shop!=null&&t.matches("input")){
-    const ws=weekStartNow();const arr=new Set(state.shop[ws]||[]);t.checked?arr.add(ds.shop):arr.delete(ds.shop);
+    const ws=weekStartNow();const arr=new Set(state.shop[ws]||[]);
+    const agg=shoppingList(ws),g=agg[ds.shop]||0;
+    const cur=state.pantry[ds.shop]||{qty:0,unit:"g"};
+    if(t.checked){arr.add(ds.shop);state.pantry[ds.shop]={qty:cur.qty+g,unit:cur.unit,updatedAt:Date.now()}}
+    else{arr.delete(ds.shop);state.pantry[ds.shop]={qty:Math.max(0,cur.qty-g),unit:cur.unit,updatedAt:Date.now()}}
     state.shop={[ws]:[...arr]};persist();t.closest("label").classList.toggle("got",t.checked);return;
   }
   if(ds.meal!=null&&t.matches("input")){
@@ -1172,11 +1377,6 @@ document.addEventListener("click",async e=>{
     pruneLog();persist();render();return;
   }
   const act=ds.act;if(!act)return;
-  if(act==="closeSheet"){closeSheet();return}
-  if(act==="unswap"){const sh=ui.sheet,ws=weekStartNow(),batch=(sh.slot==="comida"||sh.slot==="cena");
-    const days=(sh.scope==="block"&&batch)?batchDays(sh.d):[sh.d];for(const dd of days)delete (state.swaps[ws]||{})[`${dd}-${sh.slot}`];
-    persist();closeSheet();render();return}
-  if(act==="unhide"){state.hidden=[];persist();render();renderSheet();return}
   if(act==="crea"){const td=today();state.log[td]=state.log[td]||{m:{}};state.log[td].crea=t.checked;persist();render();return}
   if(act==="finishOnb"){const p=readProfileForm(ui.onb);if(!p)return;state=newState(p);persist();ui.tab="hoy";render();window.scrollTo(0,0);return}
   if(act==="saveW"){
@@ -1188,6 +1388,104 @@ document.addEventListener("click",async e=>{
   if(act==="submitCheckin"){submitCheckin();return}
   if(act==="toPlan"){ui.view=null;ui.tab="plan";ui.planDay=dayIdx(today());render();window.scrollTo(0,0);return}
   if(act==="saveProfile"){const p=readProfileForm(state.profile);if(!p)return;state.profile=p;scaleCache.clear();persist();toast("Cambios guardados");render();return}
+  if(act==="saveKeys"){
+    state.apiKeys.anthropic=$("#keyAnthropic").value.trim();
+    state.apiKeys.hevy=$("#keyHevy").value.trim();
+    persist();toast("Claves guardadas");render();return;
+  }
+  if(act==="syncHevy"){state.apiKeys.hevy=$("#keyHevy").value.trim();persist();await trySyncHevy(false);return}
+  if(act==="newReceta"){ui.editRecipe={id:uid8(),n:"",slots:["comida"],min:20,batch:false,portable:false,items:[],steps:[]};ui.view="recetaEdit";render();window.scrollTo(0,0);return}
+  if(act==="rcAddRow"){$("#rcItems").insertAdjacentHTML("beforeend",rcRow(Object.keys(allProducts())[0],100,"C"));return}
+  if(act==="saveReceta"){
+    readRecipeDraftFromDOM();
+    const d=ui.editRecipe;
+    if(!d.n){toast("Ponle un nombre a la receta");return}
+    if(!d.slots.length){toast("Elige cuándo se come");return}
+    if(!d.items.length){toast("Añade al menos un ingrediente");return}
+    const i=state.recipes.findIndex(r=>r.id===d.id);
+    if(i>=0)state.recipes[i]=d;else state.recipes.push(d);
+    scaleCache.clear();persist();toast("Receta guardada");
+    ui.view=null;ui.tab="cocina";ui.cocinaTab="recetas";render();window.scrollTo(0,0);return;
+  }
+  if(act==="deleteReceta"){
+    if(confirm("¿Eliminar esta receta?")){
+      state.recipes=state.recipes.filter(r=>r.id!==ui.editRecipe.id);
+      scaleCache.clear();persist();ui.view=null;ui.tab="cocina";render();window.scrollTo(0,0);
+    }return;
+  }
+  if(act==="newIngrediente"){ui.editIngredient={id:uid8(),n:"",sec:SECTIONS[0],k:0,p:0,c:0,f:0,eur:0,isNew:true};ui.view="ingredienteEdit";render();window.scrollTo(0,0);return}
+  if(act==="saveIngrediente"){
+    const d=ui.editIngredient,num=id=>parseFloat(String($(id).value).replace(",","."))||0;
+    d.n=$("#inName").value.trim();
+    if(!d.n){toast("Ponle un nombre al ingrediente");return}
+    d.sec=$("#inSec").value;d.k=num("#inK");d.p=num("#inP");d.c=num("#inC");d.f=num("#inF");d.eur=num("#inEur");
+    state.products[d.id]={n:d.n,sec:d.sec,k:d.k,p:d.p,c:d.c,f:d.f,eur:d.eur};
+    scaleCache.clear();persist();toast("Ingrediente guardado");
+    ui.view=null;ui.tab="cocina";ui.cocinaTab="ingredientes";render();window.scrollTo(0,0);return;
+  }
+  if(act==="deleteIngrediente"){
+    if(confirm("¿Eliminar tu versión de este ingrediente?")){
+      delete state.products[ui.editIngredient.id];
+      scaleCache.clear();persist();ui.view=null;ui.tab="cocina";render();window.scrollTo(0,0);
+    }return;
+  }
+  if(act==="fotoDespensa"){ui.view="fotoDespensa";ui.detect=null;render();window.scrollTo(0,0);return}
+  if(act==="confirmDetect"){
+    let n=0;
+    for(const it of ui.detect.items){
+      if(!it.include)continue;
+      let id=it.matchId;
+      if(!id){id=uid8();state.products[id]={n:it.nombre,sec:"Despensa",k:0,p:0,c:0,f:0,eur:0}}
+      const cur=state.pantry[id]||{qty:0,unit:"g"};
+      state.pantry[id]={qty:cur.qty+it.qty,unit:cur.unit,updatedAt:Date.now()};
+      n++;
+    }
+    scaleCache.clear();persist();toast(`${n} ${n===1?"ingrediente añadido":"ingredientes añadidos"} a la despensa`);
+    ui.view=null;ui.tab="cocina";ui.cocinaTab="despensa";render();window.scrollTo(0,0);return;
+  }
+  if(act==="openEntreno"){
+    const td=today(),d=dayIdx(td);
+    if(!state.workoutLog[td])state.workoutLog[td]=startWorkoutLog(td,schedule(d));
+    ui.view="entrenoHoy";render();window.scrollTo(0,0);return;
+  }
+  if(act==="addExercise"){
+    readEntrenoDraftFromDOM();
+    const id=$("#enAddEx").value,log=state.workoutLog[today()];
+    log.exercises.push({exerciseId:id,sets:[{reps:8,weight:0,done:false}]});
+    render();return;
+  }
+  if(act==="removeEx"){readEntrenoDraftFromDOM();const log=state.workoutLog[today()];log.exercises.splice(+ds.exidx,1);render();return}
+  if(act==="addSet"){readEntrenoDraftFromDOM();const log=state.workoutLog[today()];log.exercises[+ds.exidx].sets.push({reps:8,weight:0,done:false});render();return}
+  if(act==="removeSet"){t.closest(".setrow").remove();return}
+  if(act==="saveEntreno"){
+    readEntrenoDraftFromDOM();persist();toast("Entreno guardado");ui.view=null;render();window.scrollTo(0,0);return;
+  }
+  if(act==="newRutina"){ui.editRutina={id:uid8(),n:"",days:[],exercises:[]};ui.view="rutinaEdit";render();window.scrollTo(0,0);return}
+  if(act==="rtAddExercise"){$("#rtExercises").insertAdjacentHTML("beforeend",rtExRow(Object.keys(allExercises())[0],[[8,0]]));return}
+  if(act==="rtAddSet"){t.previousElementSibling.insertAdjacentHTML("beforeend",rtSetRow(8,0));return}
+  if(act==="saveRutina"){
+    readRutinaDraftFromDOM();
+    const d=ui.editRutina;
+    if(!d.n){toast("Ponle un nombre a la rutina");return}
+    if(!d.exercises.length){toast("Añade al menos un ejercicio");return}
+    state.routines=state.routines||[];
+    const i=state.routines.findIndex(r=>r.id===d.id);
+    if(i>=0)state.routines[i]=d;else state.routines.push(d);
+    persist();toast("Rutina guardada");ui.view=null;ui.tab="gym";ui.gymTab="rutinas";render();window.scrollTo(0,0);return;
+  }
+  if(act==="deleteRutina"){
+    if(confirm("¿Eliminar esta rutina?")){
+      state.routines=state.routines.filter(r=>r.id!==ui.editRutina.id);
+      persist();ui.view=null;ui.tab="gym";render();window.scrollTo(0,0);
+    }return;
+  }
+  if(act==="pantryAddBtn"){
+    const id=$("#pantryAdd").value,g=Math.max(0,Math.round(parseFloat($("#pantryQty").value)||0));
+    if(!g){toast("Escribe una cantidad");return}
+    const cur=state.pantry[id]||{qty:0,unit:"g"};
+    state.pantry[id]={qty:cur.qty+g,unit:cur.unit,updatedAt:Date.now()};
+    persist();toast("Añadido a la despensa");render();return;
+  }
   if(act==="export"){await offerDownload("volumen-mis-datos.json",JSON.stringify(state,null,2));return}
   if(act==="ics"){await offerDownload("volumen-recordatorios.ics",buildICS());return}
   if(act==="reset"){if(confirm("Se borrarán tu perfil, pesos, check-ins y fotos. ¿Seguro?")){
@@ -1205,11 +1503,6 @@ document.addEventListener("click",async e=>{
     if(act==="signup"&&!res.data.session){ui.authMsg="Cuenta creada. Confirma el email que te ha llegado y luego entra.";render()}
     return}
 });
-document.addEventListener("input",e=>{
-  const t=e.target;if(!t.dataset||!(t.dataset.tk||t.dataset.tr))return;
-  saveSetRow(t.closest(".setrow"));
-});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&ui.sheet)closeSheet()});
 function pruneLog(){const keys=Object.keys(state.log).sort();while(keys.length>120)delete state.log[keys.shift()]}
 async function offerDownload(filename,data){
   const type=filename.endsWith(".ics")?"text/calendar":"application/json";

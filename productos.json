@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-09-28",
+ "actualizado": "2026-10-04",
  "fuente": "Precios: API pública de tienda.mercadona.es. Nutrición: Open Food Facts (ODbL).",
  "productos": {
   "avena": {
@@ -47,7 +47,14 @@
    "url": "https://tienda.mercadona.es/product/18294/pan-molde-integral-con-20-avena-5-trigo-sarraceno-hacendado-paquete",
    "foto": "https://prod-mercadona.imgix.net/images/f3ccd8c0b23f1583738c49f03fb2e254.jpg?fit=crop&h=300&w=300",
    "ean": "8402001059247",
-   "precio_kg": 2.73
+   "precio_kg": 2.73,
+   "nutricion": {
+    "k": 269,
+    "p": 10.3,
+    "c": 44.6,
+    "f": 6.7,
+    "fuente": "Open Food Facts"
+   }
   },
   "wrap": {
    "id": "17567",
@@ -194,12 +201,12 @@
   "merluza": {
    "id": "26761",
    "nombre": "Medallones de merluza del Cabo Hacendado ultracongelados",
-   "precio": 4.6,
+   "precio": 4.5,
    "formato": "kg",
    "url": "https://tienda.mercadona.es/product/26761/medallones-merluza-cabo-hacendado-ultracongelados-paquete",
    "foto": "https://prod-mercadona.imgix.net/images/c302f174c1c3f7c88c397bd6a67472d7.jpg?fit=crop&h=300&w=300",
    "ean": "8402001046063",
-   "precio_kg": 9.2,
+   "precio_kg": 9.0,
    "nutricion": {
     "k": 82,
     "p": 18.0,
@@ -259,7 +266,14 @@
    "url": "https://tienda.mercadona.es/product/51071/queso-fresco-batido-desnatado-0-mg-hacendado-tarrina",
    "foto": "https://prod-mercadona.imgix.net/images/d2f12f4f6b2de080b5aeebc8aa1a5e46.jpg?fit=crop&h=300&w=300",
    "ean": "8480000510716",
-   "precio_kg": 2.2
+   "precio_kg": 2.2,
+   "nutricion": {
+    "k": 46,
+    "p": 8.0,
+    "c": 3.5,
+    "f": 0.5,
+    "fuente": "Open Food Facts"
+   }
   },
   "yogurP": {
    "id": "20908",
@@ -281,20 +295,29 @@
   "lecheS": {
    "id": "10382",
    "nombre": "Leche semidesnatada Hacendado",
-   "precio": 0.84,
+   "precio": 0.83,
    "formato": "1.0 l",
    "url": "https://tienda.mercadona.es/product/10382/leche-semidesnatada-hacendado-brick",
    "foto": "https://prod-mercadona.imgix.net/images/5a14472b53ac7a848fc8220982694c4a.jpg?fit=crop&h=300&w=300",
    "ean": "8402001002106",
-   "precio_kg": 0.84
+   "precio_kg": 0.83,
+   "nutricion": {
+    "k": 49,
+    "p": 3.2,
+    "c": 4.7,
+    "f": 1.6,
+    "fuente": "Open Food Facts"
+   }
   },
   "lecheE": {
    "id": "10380",
    "nombre": "Leche entera Hacendado",
    "precio": 0.96,
+   "formato": "1.0 l",
    "url": "https://tienda.mercadona.es/product/10380/leche-entera-hacendado-brick",
    "foto": "https://prod-mercadona.imgix.net/images/0230a339ba4f6f64af767ea94081ce28.jpg?fit=crop&h=300&w=300",
-   "error": "The read operation timed out"
+   "ean": "8402001002083",
+   "precio_kg": 0.96
   },
   "queso": {
    "id": "50543",

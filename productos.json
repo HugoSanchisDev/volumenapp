@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-04",
+ "actualizado": "2026-10-11",
  "fuente": "Precios: API pública de tienda.mercadona.es. Nutrición: Open Food Facts (ODbL).",
  "productos": {
   "avena": {
@@ -83,10 +83,10 @@
    "ean": "8480000140135",
    "precio_kg": 8.87,
    "nutricion": {
-    "k": 113,
-    "p": 2.6,
-    "c": 23.3,
-    "f": 0.9,
+    "k": 363,
+    "p": 8.5,
+    "c": 75.0,
+    "f": 2.8,
     "fuente": "Open Food Facts"
    }
   },
@@ -137,12 +137,12 @@
   "pollo": {
    "id": "2787",
    "nombre": "Filetes pechuga de pollo",
-   "precio": 4.09,
+   "precio": 4.31,
    "formato": "0.56 kg",
    "url": "https://tienda.mercadona.es/product/2787/filetes-pechuga-pollo-bandeja",
    "foto": "https://prod-mercadona.imgix.net/images/cfbe3b741d3a64cc637efe0c7bf0bb93.jpg?fit=crop&h=300&w=300",
    "ean": "2105100027877",
-   "precio_kg": 7.3
+   "precio_kg": 7.7
   },
   "muslo": {
    "id": "2789",
@@ -339,12 +339,12 @@
   "aove": {
    "id": "4740",
    "nombre": "Aceite de oliva virgen extra Hacendado",
-   "precio": 4.45,
+   "precio": 4.35,
    "formato": "1.0 l",
    "url": "https://tienda.mercadona.es/product/4740/aceite-oliva-virgen-extra-hacendado-botella",
    "foto": "https://prod-mercadona.imgix.net/images/a5648e373920a10023a7ab6304eb0dc0.jpg?fit=crop&h=300&w=300",
    "ean": "8402001001185",
-   "precio_kg": 4.45,
+   "precio_kg": 4.35,
    "nutricion": {
     "k": 822,
     "p": 0.0,
@@ -383,12 +383,12 @@
   "nueces": {
    "id": "34024",
    "nombre": "Nuez natural Hacendado pelada",
-   "precio": 2.5,
+   "precio": 2.4,
    "formato": "0.2 kg",
    "url": "https://tienda.mercadona.es/product/34024/nuez-natural-hacendado-pelada-paquete",
    "foto": "https://prod-mercadona.imgix.net/images/de768af5358346867a912d57ec96b69c.jpeg?fit=crop&h=300&w=300",
    "ean": "8402001001345",
-   "precio_kg": 12.5,
+   "precio_kg": 12.0,
    "nutricion": {
     "k": 579,
     "p": 21.0,

@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-18",
+ "actualizado": "2026-10-25",
  "fuente": "Precios: API pública de tienda.mercadona.es. Nutrición: Open Food Facts (ODbL).",
  "productos": {
   "avena": {
@@ -25,12 +25,12 @@
   "pasta": {
    "id": "13025",
    "nombre": "Macarrón grueso Hacendado",
-   "precio": 0.9,
+   "precio": 0.95,
    "formato": "0.5 kg",
    "url": "https://tienda.mercadona.es/product/13025/macarron-grueso-hacendado-paquete",
    "foto": "https://prod-mercadona.imgix.net/images/9324831d28eecab4a1081c86a8f65786.jpg?fit=crop&h=300&w=300",
    "ean": "8402001033933",
-   "precio_kg": 1.8,
+   "precio_kg": 1.9,
    "nutricion": {
     "k": 351,
     "p": 13.0,
@@ -179,7 +179,14 @@
    "url": "https://tienda.mercadona.es/product/17775/pechuga-pavo-hacendado-finas-lonchas-paquete",
    "foto": "https://prod-mercadona.imgix.net/images/95fd68946c67b47e452b5b3537ec89c5.jpg?fit=crop&h=300&w=300",
    "ean": "8402001058417",
-   "precio_kg": 10.22
+   "precio_kg": 10.22,
+   "nutricion": {
+    "k": 78,
+    "p": 17.8,
+    "c": 0.6,
+    "f": 0.5,
+    "fuente": "Open Food Facts"
+   }
   },
   "salmon": {
    "id": "24511",
@@ -317,7 +324,14 @@
    "url": "https://tienda.mercadona.es/product/10380/leche-entera-hacendado-brick",
    "foto": "https://prod-mercadona.imgix.net/images/0230a339ba4f6f64af767ea94081ce28.jpg?fit=crop&h=300&w=300",
    "ean": "8402001002083",
-   "precio_kg": 0.96
+   "precio_kg": 0.96,
+   "nutricion": {
+    "k": 63,
+    "p": 3.1,
+    "c": 4.6,
+    "f": 3.6,
+    "fuente": "Open Food Facts"
+   }
   },
   "queso": {
    "id": "50543",

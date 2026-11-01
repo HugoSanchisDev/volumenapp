@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-25",
+ "actualizado": "2026-11-01",
  "fuente": "Precios: API pública de tienda.mercadona.es. Nutrición: Open Food Facts (ODbL).",
  "productos": {
   "avena": {
@@ -258,10 +258,10 @@
    "ean": "8411384009855",
    "precio_kg": 5.67,
    "nutricion": {
-    "k": 50,
+    "k": 42,
     "p": 11.0,
-    "c": 0.5,
-    "f": 0.1,
+    "c": 0.0,
+    "f": 0.0,
     "fuente": "Open Food Facts"
    }
   },
@@ -370,12 +370,12 @@
   "aguacate": {
    "id": "3858",
    "nombre": "Aguacates",
-   "precio": 3.65,
+   "precio": 3.87,
    "formato": "0.73 kg",
    "url": "https://tienda.mercadona.es/product/3858/aguacates-bandeja",
    "foto": "https://prod-mercadona.imgix.net/images/3626a39afce23381b73d55fb7a4a3c7d.jpg?fit=crop&h=300&w=300",
    "ean": "2105400038580",
-   "precio_kg": 5.0
+   "precio_kg": 5.3
   },
   "cacahuete": {
    "id": "16883",

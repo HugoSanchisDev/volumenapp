@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-01",
+ "actualizado": "2026-11-08",
  "fuente": "Precios: API pública de tienda.mercadona.es. Nutrición: Open Food Facts (ODbL).",
  "productos": {
   "avena": {
@@ -208,12 +208,12 @@
   "merluza": {
    "id": "26761",
    "nombre": "Medallones de merluza del Cabo Hacendado ultracongelados",
-   "precio": 4.5,
+   "precio": 4.6,
    "formato": "kg",
    "url": "https://tienda.mercadona.es/product/26761/medallones-merluza-cabo-hacendado-ultracongelados-paquete",
    "foto": "https://prod-mercadona.imgix.net/images/c302f174c1c3f7c88c397bd6a67472d7.jpg?fit=crop&h=300&w=300",
    "ean": "8402001046063",
-   "precio_kg": 9.0,
+   "precio_kg": 9.2,
    "nutricion": {
     "k": 82,
     "p": 18.0,

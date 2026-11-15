@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-08",
+ "actualizado": "2026-11-15",
  "fuente": "Precios: API pública de tienda.mercadona.es. Nutrición: Open Food Facts (ODbL).",
  "productos": {
   "avena": {
@@ -353,12 +353,12 @@
   "aove": {
    "id": "4740",
    "nombre": "Aceite de oliva virgen extra Hacendado",
-   "precio": 4.35,
+   "precio": 4.1,
    "formato": "1.0 l",
    "url": "https://tienda.mercadona.es/product/4740/aceite-oliva-virgen-extra-hacendado-botella",
    "foto": "https://prod-mercadona.imgix.net/images/a5648e373920a10023a7ab6304eb0dc0.jpg?fit=crop&h=300&w=300",
    "ean": "8402001001185",
-   "precio_kg": 4.35,
+   "precio_kg": 4.1,
    "nutricion": {
     "k": 822,
     "p": 0.0,
